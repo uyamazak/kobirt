@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "lint": "eslint --fix .",
+    "lint": "eslint --ext \".js,.vue,.ts\" --fix --ignore-path .gitignore .",
     "build": "vuedx-typecheck . && vite build"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "@vue/compiler-sfc": "^3.0.5",
     "@vuedx/typecheck": "^0.6.0",
     "@vuedx/typescript-plugin-vue": "^0.6.0",
+    "@typescript-eslint/parser": "^4.20.0",
     "autoprefixer": "^10.2.5",
     "eslint": "^7.23.0",
     "eslint-config-prettier": "^8.1.0",

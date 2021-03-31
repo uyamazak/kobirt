@@ -4,11 +4,10 @@ module.exports = {
     browser: true,
     node: true,
   },
-  extends: [
-    'prettier',
-    'plugin:prettier/recommended',
-    'plugin:vue/vue3-recommended',
-  ],
+  parserOptions: {
+    parser: '@typescript-eslint/parser',
+  },
+  extends: ['plugin:vue/vue3-recommended', 'plugin:prettier/recommended'],
   plugins: ['prettier'],
   // add your custom rules here
   rules: {},
