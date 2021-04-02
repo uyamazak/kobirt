@@ -2,7 +2,7 @@
   <div v-if="isLoading" class="flex h-screen w-full z-20 overflow-y-auto">
     <div class="m-auto">
       <ToriSide class="max-h-96" />
-      <p class="text-center">さいたま の ちず を よみんこんでる</p>
+      <p class="text-center">さいたま の ちず を よみんこんでるんだよ</p>
     </div>
   </div>
   <div :class="{ invisible: isLoading }" class="overflow-y-auto">
@@ -16,15 +16,13 @@
             {{ message }}
           </div>
           <ToriFront
-            :class="{
-              'reverse-x': toriClickCount % 2 !== 0,
-            }"
+            :reverse-x="toriActionCount % 2 !== 0"
             class="max-h-64"
             @click="toriClick"
           />
         </div>
         <div class="w-2/3 pt-5">
-          <div v-if="currentMunicipal">{{ currentMunicipal }}はどこだろ？</div>
+          <div v-if="currentMunicipal">{{ currentMunicipal }}はどこ？</div>
           <div v-else>おわり</div>
         </div>
       </div>
@@ -45,15 +43,15 @@ import axios from 'axios'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
 import { getPastelColors, incorrectColors } from './colors'
-import { incorrectStyle, defaultStyle, selectedStyle } from './layer-styles'
+import {
+  defaultStyle,
+  makeIncorrectStyle,
+  makeSelectedStyle,
+} from './layer-styles'
 import { getMapTile } from './map-tiles'
+import { MunicipalityOptions } from './types'
 import 'leaflet/dist/leaflet.css'
 
-declare module 'leaflet' {
-  interface Layer {
-    setStyle(style: L.PathOptions): L.Layer
-  }
-}
 /**
  * @url https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
  */
@@ -73,15 +71,6 @@ function shuffle<T>(array: T[]): T[] {
   return array
 }
 
-interface MunicipalityOption {
-  color?: string
-  fillColor?: string
-  selected?: boolean
-  corrected?: boolean
-}
-
-type MunicipalityOptions = { [id: string]: MunicipalityOption }
-
 export default defineComponent({
   name: 'App',
   components: {
@@ -89,21 +78,21 @@ export default defineComponent({
     ToriSide,
   },
   setup() {
-    let GEO_JSON: GeoJsonObject | null = null
+    let geoJsonObject: GeoJsonObject | null = null
     let map: L.Map
-    const isLoading = ref<boolean>(true)
-    const toriClickCount = ref<number>(0)
+    const isLoading = ref<boolean>(false)
+    const toriActionCount = ref<number>(0)
     const correctCount = ref<number>(0)
     const incorrectCount = ref<number>(0)
     const incorrectLevel = ref<number>(0)
     const message = ref<string>('')
-    const messageTimeerId = ref<number>(0)
     const mapRef = ref<HTMLElement>()
     const municipalNames = ref<string[]>([])
     const toriClick = () => {
       changeTileLayer()
-      toriClickCount.value++
+      toriActionCount.value++
     }
+    let messageTimeerId = 0
     let codeProps = reactive<MunicipalityOptions>({})
     let tileLayer: L.TileLayer | null = null
     onMounted(async () => {
@@ -126,6 +115,7 @@ export default defineComponent({
         // 中央 都幾川リバーサイドパーク
         map.setView([36.0094674, 139.4025361], 8)
       }
+      isLoading.value = true
       loadGeojson('/geojson/saitama.geojson', municipalNames).then(() => {
         isLoading.value = false
       })
@@ -168,8 +158,8 @@ export default defineComponent({
     }
     const setFlushMessage = (text: string, timeout = 3000) => {
       message.value = text
-      clearTimeout(messageTimeerId.value)
-      messageTimeerId.value = setTimeout(() => {
+      clearTimeout(messageTimeerId)
+      messageTimeerId = setTimeout(() => {
         message.value = ''
       }, timeout)
     }
@@ -183,6 +173,7 @@ export default defineComponent({
         incorrectLevel.value = max
       }
     }
+    // 飛び地をあわせたもの
     const integratedLayers: { [key: string]: L.Layer[] } = {}
     const geoJsonFeatureClickHandler: L.LeafletMouseEventHandlerFn = (
       event
@@ -190,17 +181,25 @@ export default defineComponent({
       if (!event.originalEvent.isTrusted) {
         return
       }
+      toriActionCount.value++
       const clickedLayer = event.target
       const code: string = clickedLayer.feature.properties.N03_007
       const name = getMuniName(clickedLayer.feature)
       const layers = integratedLayers[code]
       clickedLayer.bindTooltip(name, { interactive: true })
+      const colors = getPastelColors()
+      const selectedStyle = makeSelectedStyle({
+        fillColor: colors[9],
+        color: colors[0],
+      })
+      const incorrectStyle = makeIncorrectStyle({
+        fillColor: incorrectColors[incorrectLevel.value],
+      })
       for (const layer of layers) {
-        const colors = getPastelColors()
         // すでに正解したやつ
         if (codeProps[code].corrected) {
           layer.setStyle(
-            selectedStyle({
+            makeSelectedStyle({
               fillColor: colors[9],
               color: colors[0],
             })
@@ -213,24 +212,15 @@ export default defineComponent({
           correctCount.value++
           changeIncorrectLevel(-2)
           municipalNames.value.shift()
-          layer.setStyle(
-            selectedStyle({
-              fillColor: colors[9],
-              color: colors[0],
-            })
-          )
+          layer.setStyle(selectedStyle)
         } else {
           setFlushMessage(`ちがうよ`)
           changeIncorrectLevel(1)
           incorrectCount.value++
-          layer.setStyle(
-            incorrectStyle({
-              fillColor: incorrectColors[incorrectLevel.value],
-            })
-          )
+          layer.setStyle(incorrectStyle)
           clickedLayer.openTooltip()
+          setTimeout(() => clickedLayer.closeTooltip(), 2000)
         }
-        setTimeout(() => clickedLayer.closeTooltip(), 2000)
       }
     }
 
@@ -238,32 +228,34 @@ export default defineComponent({
       geojson: string,
       municipalNames: Ref<string[]>
     ) => {
-      const rawJson = await axios.get(geojson)
-      GEO_JSON = rawJson.data
-      if (GEO_JSON) {
-        const municipals: string[] = []
-        const geoJson = L.geoJSON(GEO_JSON, {
-          style: defaultStyle,
-          onEachFeature: (feature, layer) => {
-            const code: string = feature.properties.N03_007
-            if (integratedLayers[code]) {
-              integratedLayers[code].push(layer)
-            } else {
-              integratedLayers[code] = [layer]
-            }
-            codeProps[code] = { corrected: false }
-            const name: string = getMuniName(feature)
-            if (!municipals.includes(name)) {
-              municipals.push(name)
-            }
-            layer.on({
-              click: geoJsonFeatureClickHandler,
-            })
-          },
-        })
-        municipalNames.value = shuffle<string>(municipals)
-        map.addLayer(geoJson)
+      const rawJson = await axios.get<GeoJsonObject>(geojson)
+      geoJsonObject = rawJson.data
+      if (!geoJsonObject) {
+        console.error('geojsonの読み込みに失敗しました')
+        return
       }
+      const municipals: string[] = []
+      const geoJson = L.geoJSON(geoJsonObject, {
+        style: defaultStyle,
+        onEachFeature: (feature, layer) => {
+          const code: string = feature.properties.N03_007
+          const name: string = getMuniName(feature)
+          if (integratedLayers[code]) {
+            integratedLayers[code].push(layer)
+          } else {
+            integratedLayers[code] = [layer]
+          }
+          codeProps[code] = { corrected: false }
+          if (!municipals.includes(name)) {
+            municipals.push(name)
+          }
+          layer.on({
+            click: geoJsonFeatureClickHandler,
+          })
+        },
+      })
+      municipalNames.value = shuffle<string>(municipals)
+      map.addLayer(geoJson)
     }
     const currentMunicipal = computed(() => {
       return municipalNames.value[0] ?? ''
@@ -279,7 +271,7 @@ export default defineComponent({
       currentMunicipal,
       changeTileLayer,
       toriClick,
-      toriClickCount,
+      toriActionCount,
     }
   },
 })

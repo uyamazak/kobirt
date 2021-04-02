@@ -19,7 +19,7 @@ const styleWrapperFunc = (
   }
 }
 
-export const incorrectStyle = styleWrapperFunc({
+export const makeIncorrectStyle = styleWrapperFunc({
   color: '#999',
   fillColor: '#aaa',
   fillOpacity: 0.7,
@@ -27,7 +27,7 @@ export const incorrectStyle = styleWrapperFunc({
   opacity: 1,
 })
 
-export const selectedStyle = styleWrapperFunc({
+export const makeSelectedStyle = styleWrapperFunc({
   color: '#999',
   fillColor: '#ccc',
   fillOpacity: 0.95,
