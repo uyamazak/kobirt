@@ -47,7 +47,6 @@ import ToriSide from './components/ToriSide.vue'
 import { getPastelColors, incorrectColors } from './colors'
 import { incorrectStyle, defaultStyle, selectedStyle } from './layer-styles'
 import { getMapTile } from './map-tiles'
-import 'leaflet/dist/leaflet.css'
 
 declare module 'leaflet' {
   interface Layer {
@@ -289,8 +288,5 @@ export default defineComponent({
 .leaflet-container .leaflet-control-attribution {
   font-size: 10px;
   line-height: 1.2;
-}
-.reverse-x {
-  transform: scale(-1, 1);
 }
 </style>
