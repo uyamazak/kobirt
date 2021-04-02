@@ -123,7 +123,7 @@ export default defineComponent({
         }).fitWorld()
         setTileLayer()
         // 中央 都幾川リバーサイドパーク
-        map.setView([36.0094674, 139.4025361], 8)
+        map.setView([36.0094674, 139.4025361], 9)
       }
       loadGeojson('/geojson/saitama.geojson', municipalNames).then(() => {
         isLoading.value = false
