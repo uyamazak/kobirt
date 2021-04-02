@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isLoading" class="flex h-screen w-full z-20 overflow-y-auto">
+  <div v-if="isLoading" class="flex h-screen w-full z-3000 overflow-y-auto">
     <div class="m-auto">
       <ToriSide class="max-h-96" />
       <p class="text-center">さいたま の ちず を よみんこんでる</p>
@@ -29,7 +29,7 @@
         </div>
       </div>
     </nav>
-    <div class="fixed bottom-0 z-2000 right-5 pb-2 text-right z-12 text-xs">
+    <div v-if="!isLoading" class="fixed bottom-0 z-2000 right-5 pb-2 text-right z-12 text-xs">
       <span class="pr-3">せいかい: {{ correctCount }}</span>
       <span class="pr-3">まちがい: {{ incorrectCount }}</span>
       <span>のこり: {{ municipalNames.length }}</span>

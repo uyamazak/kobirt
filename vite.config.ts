@@ -8,8 +8,9 @@ export default defineConfig({
     WindiCSS({
       scan: {
         dirs: ['.'], // all files in the cwd
-        fileExtensions: ['vue', 'js', 'ts'], // also enabled scanning for js/ts
+        fileExtensions: ['vue', 'js', 'ts'],
       },
+      safelist: 'invisible'
     }),
   ],
 })
