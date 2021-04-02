@@ -12,7 +12,7 @@
     <nav class="fixed w-full z-1000 bg-gray-50 bg-opacity-90 bottom-0 max-h-64">
       <div class="flex">
         <div class="w-1/3 pt-2 text-center">
-          <div class="h-1 text-opacity-50 text-xs">
+          <div class="h-1 text-opacity-50 lg:text-lg text-xs">
             {{ message }}
           </div>
           <ToriFront
@@ -21,13 +21,13 @@
             @click="toriClick"
           />
         </div>
-        <div class="w-2/3 pt-5">
+        <div class="w-2/3 pt-5 lg:text-lg">
           <div v-if="currentMunicipal">{{ currentMunicipal }}はどこ？</div>
           <div v-else>おわり</div>
         </div>
       </div>
     </nav>
-    <div v-if="!isLoading" class="fixed bottom-0 z-2000 right-5 pb-2 text-right z-12 text-xs">
+    <div v-if="!isLoading" class="fixed bottom-0 z-2000 right-5 pb-2 text-right lg:text-md text-xs">
       <span class="pr-3">せいかい: {{ correctCount }}</span>
       <span class="pr-3">まちがい: {{ incorrectCount }}</span>
       <span>のこり: {{ municipalNames.length }}</span>
@@ -90,6 +90,7 @@ export default defineComponent({
     const toriClick = () => {
       changeTileLayer()
       toriActionCount.value++
+      console.log(toriActionCount.value)
     }
     let messageTimeerId = 0
     let codeProps = reactive<MunicipalityOptions>({})
