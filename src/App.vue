@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isLoading" class="flex h-screen w-full z-20 overflow-y-auto">
+  <div v-if="isLoading" class="flex h-screen w-full z-3000 overflow-y-auto">
     <div class="m-auto">
       <ToriSide class="max-h-96" />
       <p class="text-center">さいたま の ちず を よみんこんでるんだよ</p>
@@ -27,7 +27,7 @@
         </div>
       </div>
     </nav>
-    <div class="fixed bottom-0 z-2000 right-5 pb-2 text-right z-12 text-xs">
+    <div v-if="!isLoading" class="fixed bottom-0 z-2000 right-5 pb-2 text-right z-12 text-xs">
       <span class="pr-3">せいかい: {{ correctCount }}</span>
       <span class="pr-3">まちがい: {{ incorrectCount }}</span>
       <span>のこり: {{ municipalNames.length }}</span>
@@ -50,7 +50,6 @@ import {
 } from './layer-styles'
 import { getMapTile } from './map-tiles'
 import { MunicipalityOptions } from './types'
-import 'leaflet/dist/leaflet.css'
 
 /**
  * @url https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -113,7 +112,7 @@ export default defineComponent({
         }).fitWorld()
         setTileLayer()
         // 中央 都幾川リバーサイドパーク
-        map.setView([36.0094674, 139.4025361], 8)
+        map.setView([36.0094674, 139.4025361], 9)
       }
       isLoading.value = true
       loadGeojson('/geojson/saitama.geojson', municipalNames).then(() => {
@@ -281,8 +280,5 @@ export default defineComponent({
 .leaflet-container .leaflet-control-attribution {
   font-size: 10px;
   line-height: 1.2;
-}
-.reverse-x {
-  transform: scale(-1, 1);
 }
 </style>
