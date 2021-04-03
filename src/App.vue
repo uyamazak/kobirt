@@ -150,6 +150,9 @@ export default defineComponent({
       removeTileLayer()
       setTileLayer()
     }
+    const getMuniCode = (feature: GeoJSON.Feature): string => {
+      return feature.properties?.N03_007 ?? ''
+    }
     const getMuniName = (feature: GeoJSON.Feature): string => {
       return (
         (feature.properties?.N03_003 ?? '') +
@@ -183,7 +186,8 @@ export default defineComponent({
       }
       toriActionCount.value++
       const clickedLayer = event.target
-      const code: string = clickedLayer.feature.properties.N03_007
+      const code: string = getMuniCode(clickedLayer.feature)
+      console.log()
       const name = getMuniName(clickedLayer.feature)
       const layers = integratedLayers[code]
       clickedLayer.bindTooltip(name, { interactive: true })
@@ -238,7 +242,7 @@ export default defineComponent({
       const geoJson = L.geoJSON(geoJsonObject, {
         style: defaultStyle,
         onEachFeature: (feature, layer) => {
-          const code: string = feature.properties.N03_007
+          const code: string = getMuniCode(feature)
           const name: string = getMuniName(feature)
           if (integratedLayers[code]) {
             integratedLayers[code].push(layer)
