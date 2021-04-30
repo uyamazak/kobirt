@@ -7,7 +7,7 @@ export default defineConfig({
     vue(),
     WindiCSS({
       safelist: 'invisible',
-      transformCSS: 'pre'
+      transformCSS: 'pre',
     }),
   ],
 })

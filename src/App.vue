@@ -2,7 +2,7 @@
   <div v-if="isLoading" class="flex h-screen w-full z-3000 overflow-y-auto">
     <div class="m-auto">
       <ToriSide class="max-h-96" />
-      <p class="text-center">さいたま の ちず を よみんこんでるんだよ</p>
+      <p class="text-center">さいたま の ちず を よみんこんでるよ</p>
     </div>
   </div>
   <div :class="{ invisible: isLoading }" class="overflow-y-auto">
@@ -23,11 +23,14 @@
         </div>
         <div class="w-2/3 pt-5 lg:text-lg">
           <div v-if="currentMunicipal">{{ currentMunicipal }}はどこ？</div>
-          <div v-else>おわり</div>
+          <div v-else>おわりだよ</div>
         </div>
       </div>
     </nav>
-    <div v-if="!isLoading" class="fixed bottom-0 z-2000 right-5 pb-2 text-right lg:text-md text-xs">
+    <div
+      v-if="!isLoading"
+      class="fixed bottom-0 z-2000 right-5 pb-2 text-right lg:text-md text-xs"
+    >
       <span class="pr-3">せいかい: {{ correctCount }}</span>
       <span class="pr-3">まちがい: {{ incorrectCount }}</span>
       <span>のこり: {{ municipalNames.length }}</span>
