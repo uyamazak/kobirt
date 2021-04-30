@@ -6,11 +6,8 @@ export default defineConfig({
   plugins: [
     vue(),
     WindiCSS({
-      scan: {
-        dirs: ['.'], // all files in the cwd
-        fileExtensions: ['vue', 'js', 'ts'],
-      },
       safelist: 'invisible',
+      transformCSS: 'pre',
     }),
   ],
 })

@@ -1,6 +1,6 @@
 <template>
   <svg viewBox="50 50 400 400" xmlns="http://www.w3.org/2000/svg">
-    <g id="tori-front-all" :class="{ 'reverse-x': reverseX }">
+    <g class="tori-front-all" :class="{ 'reverse-x': reverseX }">
       <g>
         <path
           fill="#e8e4de"
@@ -54,8 +54,8 @@ export default defineComponent({
   },
 })
 </script>
-<style>
-#tori-front-all {
+<style scoped>
+.tori-front-all {
   transform-origin: 250px center;
 }
 .reverse-x {
