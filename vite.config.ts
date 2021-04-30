@@ -10,7 +10,7 @@ export default defineConfig({
         dirs: ['.'], // all files in the cwd
         fileExtensions: ['vue', 'js', 'ts'],
       },
-      safelist: 'invisible'
+      safelist: 'invisible',
     }),
   ],
 })

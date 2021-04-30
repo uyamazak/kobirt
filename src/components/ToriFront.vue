@@ -59,6 +59,6 @@ export default defineComponent({
   transform-origin: 250px center;
 }
 .reverse-x {
-  transform: translate(-1, 0);
+  transform: scale(-1, 1);
 }
 </style>
