@@ -60,7 +60,7 @@ https://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N03.html
 地理院タイルを用いたサイト構築サンプル集
 
 https://maps.gsi.go.jp/development/sample.html
-# Loadmap
+# Roadmap
 - 市区町村のよみがなつける
 - 市区町村ごとにヒントとか、豆知識の文章つける
 - ブラウザに保存機能
@@ -68,11 +68,13 @@ https://maps.gsi.go.jp/development/sample.html
 - 共有機能
 
 # Contributing
+## プログラミングできる人
 埼玉以外作りたい方は勝手にフォークして作ったりしてください。
 
-必要があれば再利用しやす変更するので連絡ください。
+必要があれば再利用しやすく変更するので連絡ください。
 
-市区町村ごとの豆知識も募集してます。
+## 埼玉県民もしくは詳しい人
+市区町村ごとの豆知識（140字ぐらい？詳細未定）募集してます
 
 
 # Author
