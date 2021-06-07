@@ -82,4 +82,4 @@ https://maps.gsi.go.jp/development/sample.html
 [uyamazak](https://github.com/uyamazak)
 
 # License
-Apache
+Apache (イラストを除く)

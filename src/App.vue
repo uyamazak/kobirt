@@ -22,7 +22,12 @@
           />
         </div>
         <div class="w-2/3 pt-5 lg:text-lg">
-          <div v-if="currentMunicipal">{{ currentMunicipal }}はどこ？</div>
+          <div v-if="currentMunicipalName">
+            {{ currentMunicipalName }}
+            <span v-if="furigana">({{ furigana }})</span>
+            はどこ？
+            {{ hint }}
+          </div>
           <div v-else>おわりだよ</div>
         </div>
       </div>
@@ -40,8 +45,17 @@
 
 <script lang="ts">
 import * as L from 'leaflet'
-import { defineComponent, ref, computed, onMounted, reactive, Ref } from 'vue'
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+  reactive,
+  watch,
+  Ref,
+} from 'vue'
 import { GeoJsonObject } from 'geojson'
+import { loadContents, ContentsJSON, getHint, getFurigana } from './contents'
 import axios from 'axios'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
@@ -82,7 +96,8 @@ export default defineComponent({
   setup() {
     let geoJsonObject: GeoJsonObject | null = null
     let map: L.Map
-    const isLoading = ref<boolean>(false)
+    const isLoadingGeoJson = ref<boolean>(false)
+    const isLoadingContents = ref<boolean>(false)
     const toriActionCount = ref<number>(0)
     const correctCount = ref<number>(0)
     const incorrectCount = ref<number>(0)
@@ -90,6 +105,10 @@ export default defineComponent({
     const message = ref<string>('')
     const mapRef = ref<HTMLElement>()
     const municipalNames = ref<string[]>([])
+    const currentMunicipalName = ref<string>('')
+    const contents = ref<ContentsJSON>()
+    const hint = ref<string>('')
+    const furigana = ref<string>('')
     const toriClick = () => {
       changeTileLayer()
       toriActionCount.value++
@@ -118,9 +137,17 @@ export default defineComponent({
         // 中央 都幾川リバーサイドパーク
         map.setView([36.0094674, 139.4025361], 9)
       }
-      isLoading.value = true
+
       loadGeojson('/geojson/saitama.geojson', municipalNames).then(() => {
-        isLoading.value = false
+        console.log('geojson loaded')
+        isLoadingGeoJson.value = false
+        changeMessage()
+      })
+      loadContents('/contents-json/saitama.json').then((data) => {
+        console.log('dialogue loaded')
+        isLoadingContents.value = false
+        contents.value = data
+        changeMessage()
       })
     })
     let attribution: L.Control.Attribution
@@ -190,7 +217,6 @@ export default defineComponent({
       toriActionCount.value++
       const clickedLayer = event.target
       const code: string = getMuniCode(clickedLayer.feature)
-      console.log()
       const name = getMuniName(clickedLayer.feature)
       const layers = integratedLayers[code]
       clickedLayer.bindTooltip(name, { interactive: true })
@@ -213,8 +239,8 @@ export default defineComponent({
           )
           return
         }
-        if (name === currentMunicipal.value) {
-          setFlushMessage(`せいかい`)
+        if (name === currentMunicipalName.value) {
+          setFlushMessage(`せいかいだよ`)
           codeProps[code].corrected = true
           correctCount.value++
           changeIncorrectLevel(-2)
@@ -228,6 +254,7 @@ export default defineComponent({
           clickedLayer.openTooltip()
           setTimeout(() => clickedLayer.closeTooltip(), 2000)
         }
+        changeMessage()
       }
     }
 
@@ -264,21 +291,43 @@ export default defineComponent({
       municipalNames.value = shuffle<string>(municipals)
       map.addLayer(geoJson)
     }
-    const currentMunicipal = computed(() => {
-      return municipalNames.value[0] ?? ''
+
+    const isLoading = computed(() => {
+      return isLoadingGeoJson.value && isLoadingContents.value
     })
+    watch(municipalNames, () => {
+      if (!isLoading.value) {
+        return
+      }
+      changeMessage()
+    })
+    const changeMessage = () => {
+      console.log(municipalNames.value)
+      const name = municipalNames.value[0] ?? ''
+      if (!name) {
+        return
+      }
+      currentMunicipalName.value = name
+      hint.value = getHint(contents.value, name)
+      furigana.value = getFurigana(contents.value, name)
+    }
     return {
       isLoading,
+      isLoadingGeoJson,
+      isLoadingContents,
       correctCount,
+      contents,
       incorrectCount,
       message,
       mapRef,
       codeProps,
       municipalNames,
-      currentMunicipal,
       changeTileLayer,
+      currentMunicipalName,
       toriClick,
       toriActionCount,
+      hint,
+      furigana,
     }
   },
 })
