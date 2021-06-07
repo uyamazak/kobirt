@@ -17,7 +17,7 @@ export const loadContents = async (path: string): Promise<void> => {
   isLoadingContents.value = true
   const rawJson = await axios.get<ContentsJSON>(path)
   if (!rawJson) {
-    console.error('contentsの読込に失敗しました')
+    console.error('コンテンツの読込に失敗しました')
   }
   isLoadingContents.value = false
   contents.value = rawJson.data
