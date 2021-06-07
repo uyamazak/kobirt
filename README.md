@@ -16,7 +16,6 @@ https://sirakobirt.web.app/
 コロナ禍もあり、住んでいる都道府県に出かける機会が増えそうなので作ってみました。
 
 
-
 # Character Design
 とりさんは[onoonoono5](https://twitter.com/onoonoono5)さんに書いていただきました。
 
@@ -68,14 +67,7 @@ https://maps.gsi.go.jp/development/sample.html
 - 共有機能
 
 # Contributing
-## プログラミングできる人
-埼玉以外作りたい方は勝手にフォークして作ったりしてください。
-
-必要があれば再利用しやすく変更するので連絡ください。
-
-## 埼玉県民もしくは詳しい人
-市区町村ごとの豆知識（140字ぐらい？詳細未定）募集してます
-
+準備中
 
 # Author
 

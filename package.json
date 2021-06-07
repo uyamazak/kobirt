@@ -16,19 +16,19 @@
     "vue": "^3.0.11"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.7.0",
-    "@typescript-eslint/parser": "^4.22.0",
-    "@vitejs/plugin-vue": "^1.2.2",
+    "@types/leaflet": "^1.7.1",
+    "@typescript-eslint/parser": "^4.26.0",
+    "@vitejs/plugin-vue": "^1.2.3",
     "@vue/compiler-sfc": "^3.0.11",
     "@vuedx/typecheck": "^0.6.0",
     "@vuedx/typescript-plugin-vue": "^0.6.0",
-    "eslint": "^7.25.0",
+    "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-vue": "^7.9.0",
-    "prettier": "^2.2.1",
-    "typescript": "^4.2.4",
-    "vite": "^2.2.3",
-    "vite-plugin-windicss": "^0.15.9"
+    "eslint-plugin-vue": "^7.10.0",
+    "prettier": "^2.3.1",
+    "typescript": "^4.3.2",
+    "vite": "^2.3.6",
+    "vite-plugin-windicss": "^1.0.1"
   }
 }

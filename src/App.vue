@@ -2,7 +2,7 @@
   <div v-if="isLoading" class="flex h-screen w-full z-3000 overflow-y-auto">
     <div class="m-auto">
       <ToriSide class="max-h-96" />
-      <p class="text-center">さいたま の ちず を よみんこんでるよ</p>
+      <p class="text-center">さいたまのちずをよみんこんでるよ</p>
     </div>
   </div>
   <div :class="{ invisible: isLoading }" class="overflow-y-auto">
@@ -22,13 +22,22 @@
           />
         </div>
         <div class="w-2/3 pt-5 lg:text-lg">
-          <div v-if="currentMunicipalName">
-            {{ currentMunicipalName }}
-            <span v-if="furigana">({{ furigana }})</span>
+          <div v-if="currentMunicipal">
+            <ruby v-if="currentMunicipal.countryName">
+              {{ currentMunicipal.countryName }} <rp>(</rp
+              ><rt>{{ currentMunicipal.countryFurigana }}</rt
+              ><rp>)</rp>
+            </ruby>
+            <ruby>
+              {{ currentMunicipal.name }} <rp>(</rp
+              ><rt v-if="currentMunicipal.furigana">{{
+                currentMunicipal.furigana
+              }}</rt
+              ><rp>)</rp>
+            </ruby>
             はどこ？
-            {{ hint }}
           </div>
-          <div v-else>おわりだよ</div>
+          <div v-else-if="!isLoading">おわりだよ {{ currentMunicipal }}</div>
         </div>
       </div>
     </nav>
@@ -38,35 +47,40 @@
     >
       <span class="pr-3">せいかい: {{ correctCount }}</span>
       <span class="pr-3">まちがい: {{ incorrectCount }}</span>
-      <span>のこり: {{ municipalNames.length }}</span>
+      <span>のこり: {{ municipalQueue.length }}</span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import * as L from 'leaflet'
-import {
-  defineComponent,
-  ref,
-  computed,
-  onMounted,
-  reactive,
-  watch,
-  Ref,
-} from 'vue'
-import { GeoJsonObject } from 'geojson'
-import { loadContents, ContentsJSON, getHint, getFurigana } from './contents'
 import axios from 'axios'
+import { defineComponent, computed, onMounted, watch } from 'vue'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
+import { GeoJsonObject } from 'geojson'
+import { loadContents, getContentItem, getFullName } from './contents'
 import { getPastelColors, incorrectColors } from './colors'
+import { changeTileLayer } from './map-tiles'
 import {
   defaultStyle,
   makeIncorrectStyle,
   makeSelectedStyle,
 } from './layer-styles'
-import { getMapTile } from './map-tiles'
-import { MunicipalityOptions } from './types'
+import {
+  isLoadingGeoJson,
+  isLoadingContents,
+  toriActionCount,
+  correctCount,
+  incorrectCount,
+  incorrectLevel,
+  message,
+  mapRef,
+  municipalQueue,
+  currentMunicipal,
+  contents,
+  codeProps,
+} from './refs'
 
 /**
  * @url https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -94,29 +108,17 @@ export default defineComponent({
     ToriSide,
   },
   setup() {
-    let geoJsonObject: GeoJsonObject | null = null
     let map: L.Map
-    const isLoadingGeoJson = ref<boolean>(false)
-    const isLoadingContents = ref<boolean>(false)
-    const toriActionCount = ref<number>(0)
-    const correctCount = ref<number>(0)
-    const incorrectCount = ref<number>(0)
-    const incorrectLevel = ref<number>(0)
-    const message = ref<string>('')
-    const mapRef = ref<HTMLElement>()
-    const municipalNames = ref<string[]>([])
-    const currentMunicipalName = ref<string>('')
-    const contents = ref<ContentsJSON>()
-    const hint = ref<string>('')
-    const furigana = ref<string>('')
+    let geoJsonObject: GeoJsonObject | null = null
+    let messageTimeerId = 0
+    // 飛び地をあわせたもの
+    const integratedLayers: { [key: string]: L.Layer[] } = {}
     const toriClick = () => {
-      changeTileLayer()
+      changeTileLayer(map)
       toriActionCount.value++
       console.log(toriActionCount.value)
     }
-    let messageTimeerId = 0
-    let codeProps = reactive<MunicipalityOptions>({})
-    let tileLayer: L.TileLayer | null = null
+
     onMounted(async () => {
       if (mapRef.value) {
         // 左上
@@ -133,61 +135,17 @@ export default defineComponent({
           zoomControl: false,
           preferCanvas: true,
         }).fitWorld()
-        setTileLayer()
+        changeTileLayer(map)
         // 中央 都幾川リバーサイドパーク
         map.setView([36.0094674, 139.4025361], 9)
       }
-
-      loadGeojson('/geojson/saitama.geojson', municipalNames).then(() => {
-        console.log('geojson loaded')
-        isLoadingGeoJson.value = false
-        changeMessage()
-      })
-      loadContents('/contents-json/saitama.json').then((data) => {
-        console.log('dialogue loaded')
-        isLoadingContents.value = false
-        contents.value = data
-        changeMessage()
-      })
+      await loadGeojson('/geojson/saitama.geojson')
+      await loadContents('/contents-json/saitama.json')
+      changeMessage()
     })
-    let attribution: L.Control.Attribution
-    const setTileLayer = () => {
-      const mapTile = getMapTile()
-      const attributionText = `<div class='max-h-6 overflow-y-scroll'>
-          <a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>
-          ${mapTile.name}
-          <br>${mapTile.attribution ?? ''}
-          </div>`
-      tileLayer = L.tileLayer(mapTile.url, {
-        attribution: attributionText,
-        opacity: 0.9,
-      })
-      attribution = L.control.attribution({
-        prefix: false,
-        position: 'topleft',
-      })
-      attribution.addTo(map)
-      tileLayer.addTo(map)
-    }
-    const removeTileLayer = () => {
-      if (tileLayer) {
-        tileLayer.remove()
-        attribution.remove()
-      }
-    }
 
-    const changeTileLayer = () => {
-      removeTileLayer()
-      setTileLayer()
-    }
     const getMuniCode = (feature: GeoJSON.Feature): string => {
       return feature.properties?.N03_007 ?? ''
-    }
-    const getMuniName = (feature: GeoJSON.Feature): string => {
-      return (
-        (feature.properties?.N03_003 ?? '') +
-        (feature.properties?.N03_004 ?? '')
-      )
     }
     const setFlushMessage = (text: string, timeout = 3000) => {
       message.value = text
@@ -206,8 +164,7 @@ export default defineComponent({
         incorrectLevel.value = max
       }
     }
-    // 飛び地をあわせたもの
-    const integratedLayers: { [key: string]: L.Layer[] } = {}
+
     const geoJsonFeatureClickHandler: L.LeafletMouseEventHandlerFn = (
       event
     ) => {
@@ -216,8 +173,12 @@ export default defineComponent({
       }
       toriActionCount.value++
       const clickedLayer = event.target
-      const code: string = getMuniCode(clickedLayer.feature)
-      const name = getMuniName(clickedLayer.feature)
+      const code = getMuniCode(clickedLayer.feature)
+      if (!code) {
+        console.error('codeの取得に失敗しました', clickedLayer.feature)
+        return
+      }
+      const name = getFullName(code)
       const layers = integratedLayers[code]
       clickedLayer.bindTooltip(name, { interactive: true })
       const colors = getPastelColors()
@@ -239,12 +200,12 @@ export default defineComponent({
           )
           return
         }
-        if (name === currentMunicipalName.value) {
+        if (code === currentMunicipal.value.code) {
           setFlushMessage(`せいかいだよ`)
           codeProps[code].corrected = true
           correctCount.value++
           changeIncorrectLevel(-2)
-          municipalNames.value.shift()
+          municipalQueue.value.shift()
           layer.setStyle(selectedStyle)
         } else {
           setFlushMessage(`ちがうよ`)
@@ -258,76 +219,64 @@ export default defineComponent({
       }
     }
 
-    const loadGeojson = async (
-      geojson: string,
-      municipalNames: Ref<string[]>
-    ) => {
+    const loadGeojson = async (geojson: string) => {
+      isLoadingGeoJson.value = true
       const rawJson = await axios.get<GeoJsonObject>(geojson)
       geoJsonObject = rawJson.data
+      isLoadingGeoJson.value = false
       if (!geoJsonObject) {
         console.error('geojsonの読み込みに失敗しました')
         return
       }
-      const municipals: string[] = []
+      const municipalsTmp: string[] = []
       const geoJson = L.geoJSON(geoJsonObject, {
         style: defaultStyle,
         onEachFeature: (feature, layer) => {
-          const code: string = getMuniCode(feature)
-          const name: string = getMuniName(feature)
+          const code = getMuniCode(feature)
           if (integratedLayers[code]) {
             integratedLayers[code].push(layer)
           } else {
             integratedLayers[code] = [layer]
           }
           codeProps[code] = { corrected: false }
-          if (!municipals.includes(name)) {
-            municipals.push(name)
+          if (!municipalsTmp.includes(code)) {
+            municipalsTmp.push(code)
           }
           layer.on({
             click: geoJsonFeatureClickHandler,
           })
         },
       })
-      municipalNames.value = shuffle<string>(municipals)
+      municipalQueue.value = shuffle<string>(municipalsTmp)
       map.addLayer(geoJson)
     }
-
     const isLoading = computed(() => {
-      return isLoadingGeoJson.value && isLoadingContents.value
+      return isLoadingGeoJson.value || isLoadingContents.value
     })
-    watch(municipalNames, () => {
-      if (!isLoading.value) {
-        return
-      }
-      changeMessage()
+    const currentMunicipalCode = computed(() => {
+      return municipalQueue.value[0]
     })
     const changeMessage = () => {
-      console.log(municipalNames.value)
-      const name = municipalNames.value[0] ?? ''
-      if (!name) {
-        return
+      const code = currentMunicipalCode.value
+      const item = getContentItem(code)
+      if (item) {
+        currentMunicipal.value = item
       }
-      currentMunicipalName.value = name
-      hint.value = getHint(contents.value, name)
-      furigana.value = getFurigana(contents.value, name)
     }
     return {
       isLoading,
       isLoadingGeoJson,
       isLoadingContents,
+      currentMunicipal,
       correctCount,
       contents,
       incorrectCount,
       message,
       mapRef,
       codeProps,
-      municipalNames,
-      changeTileLayer,
-      currentMunicipalName,
-      toriClick,
+      municipalQueue,
       toriActionCount,
-      hint,
-      furigana,
+      toriClick,
     }
   },
 })
