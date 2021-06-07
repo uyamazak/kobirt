@@ -1,3 +1,4 @@
+import * as L from 'leaflet'
 /**
  * https://maps.gsi.go.jp/development/ichiran.html
  */
@@ -16,6 +17,8 @@ type MapTiles = {
     attribution?: string
   }
 }
+let tileLayer: L.TileLayer | null = null
+let attribution: L.Control.Attribution
 const mapTiles: MapTiles = {
   blank: {
     name: '白地図',
@@ -66,4 +69,34 @@ const mapNames = mapNamesGen()
 export const getMapTile = () => {
   const name = mapNames.next()
   return mapTiles[name.value]
+}
+
+export const setTileLayer = (map: L.Map) => {
+  const mapTile = getMapTile()
+  const attributionText = `<div class='max-h-6 overflow-y-scroll'>
+          <a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>
+          ${mapTile.name}
+          <br>${mapTile.attribution ?? ''}
+          </div>`
+  tileLayer = L.tileLayer(mapTile.url, {
+    attribution: attributionText,
+    opacity: 0.9,
+  })
+  attribution = L.control.attribution({
+    prefix: false,
+    position: 'topleft',
+  })
+  attribution.addTo(map)
+  tileLayer.addTo(map)
+}
+export const removeTileLayer = () => {
+  if (tileLayer) {
+    tileLayer.remove()
+    attribution.remove()
+  }
+}
+
+export const changeTileLayer = (map: L.Map) => {
+  removeTileLayer()
+  setTileLayer(map)
 }
