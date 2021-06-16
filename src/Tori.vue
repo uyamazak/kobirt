@@ -149,18 +149,18 @@ export default defineComponent({
 }
 .fukidasi:before {
   @apply absolute;
-  content: "";
+  content: '';
   bottom: -24px;
   left: 50%;
   margin-left: -16px;
   border: 12px solid transparent;
-  border-top: 12px solid #FFF;
+  border-top: 12px solid #fff;
   z-index: 2;
 }
 
 .fukidasi:after {
   @apply absolute;
-  content: "";
+  content: '';
   bottom: -30px;
   left: 50%;
   margin-left: -19px;
