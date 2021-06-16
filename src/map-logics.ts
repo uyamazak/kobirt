@@ -13,14 +13,14 @@ import {
 } from './states'
 import { InitMapOptions, IntegratedLayers } from './types'
 import { changeTileLayer } from './map-tiles'
-import { getFullName } from './contents'
+import { getFullName, getFurigana } from './contents'
 import {
   defaultStyle,
   makeIncorrectStyle,
   makeSelectedStyle,
 } from './layer-styles'
 import { GeoJsonObject } from 'geojson'
-import { changeMessage, setFlushMessage } from './message'
+import { changeMessage, setFlashMessage } from './message'
 
 const getMuniCode = (feature: GeoJSON.Feature): string => {
   return feature.properties?.N03_007 ?? ''
@@ -69,6 +69,10 @@ export const initLeafletMap = async (
   await loadGeojson(map, geoJsonUrl)
   return map
 }
+const isCorrect = (code: string): boolean => {
+  return code === currentMunicipal?.value?.code
+}
+
 const geoJsonFeatureClickHandler: (
   integratedLayers: IntegratedLayers
 ) => L.LeafletMouseEventHandlerFn = (integratedLayers) => {
@@ -84,8 +88,8 @@ const geoJsonFeatureClickHandler: (
       return
     }
     const name = getFullName(code)
+    clickedLayer.bindTooltip(name, { interactive: false })
     const layers = integratedLayers[code]
-    clickedLayer.bindTooltip(name, { interactive: true })
     const colors = getPastelColors()
     const selectedStyle = makeSelectedStyle({
       fillColor: colors[9],
@@ -94,9 +98,11 @@ const geoJsonFeatureClickHandler: (
     const incorrectStyle = makeIncorrectStyle({
       fillColor: incorrectColors[incorrectLevel.value],
     })
+    const furigana = getFurigana(code)
     for (const layer of layers) {
       // すでに正解したやつ
       if (municipalityStates[code].corrected) {
+        setFlashMessage(`${furigana}\nだね`)
         layer.setStyle(
           makeSelectedStyle({
             fillColor: colors[9],
@@ -105,15 +111,15 @@ const geoJsonFeatureClickHandler: (
         )
         return
       }
-      if (code === (currentMunicipal?.value?.code ?? '')) {
-        setFlushMessage(`せいかいだよ`)
+      if (isCorrect(code)) {
+        setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
         municipalityStates[code].corrected = true
         correctCount.value++
         changeIncorrectLevel(-2)
         municipalQueue.value.shift()
         layer.setStyle(selectedStyle)
       } else {
-        setFlushMessage(`ちがうよ`)
+        setFlashMessage(`ちがうよ それは\n${furigana}`)
         changeIncorrectLevel(1)
         incorrectCount.value++
         layer.setStyle(incorrectStyle)

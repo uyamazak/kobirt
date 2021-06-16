@@ -20,7 +20,7 @@ export const changeMessage = () => {
   }
 }
 
-export const setFlushMessage = (text: string, timeout = 3000) => {
+export const setFlashMessage = (text: string, timeout = 3000) => {
   message.value = text
   clearTimeout(messageTimerId.value)
   messageTimerId.value = setTimeout(() => {

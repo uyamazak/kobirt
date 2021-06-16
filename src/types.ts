@@ -29,7 +29,6 @@ export interface InitMapOptions {
   minZoom: number
   maxZoom: number
   geoJsonUrl: string
-  contentsJsonUrl: string
 }
 export interface IntegratedLayers {
   [key: string]: L.Layer[]
