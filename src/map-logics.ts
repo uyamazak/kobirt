@@ -98,9 +98,11 @@ const geoJsonFeatureClickHandler: (
     const incorrectStyle = makeIncorrectStyle({
       fillColor: incorrectColors[incorrectLevel.value],
     })
+    const furigana = getFurigana(code)
     for (const layer of layers) {
       // すでに正解したやつ
       if (municipalityStates[code].corrected) {
+        setFlashMessage(`${furigana}\nだね`)
         layer.setStyle(
           makeSelectedStyle({
             fillColor: colors[9],
@@ -109,16 +111,15 @@ const geoJsonFeatureClickHandler: (
         )
         return
       }
-      const furigana = getFurigana(code)
       if (isCorrect(code)) {
-        setFlashMessage(`せいかい それが\n${furigana}`)
+        setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
         municipalityStates[code].corrected = true
         correctCount.value++
         changeIncorrectLevel(-2)
         municipalQueue.value.shift()
         layer.setStyle(selectedStyle)
       } else {
-        setFlashMessage(`ちがうよ それは\n${furigana}`, 10000000)
+        setFlashMessage(`ちがうよ それは\n${furigana}`)
         changeIncorrectLevel(1)
         incorrectCount.value++
         layer.setStyle(incorrectStyle)

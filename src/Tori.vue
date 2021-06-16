@@ -2,7 +2,7 @@
   <div v-if="isLoading" class="flex h-screen w-full z-3000 overflow-y-auto">
     <div class="m-auto">
       <ToriSide class="max-h-96" />
-      <p class="text-center">さいたまのちずをよみんこんでるよ</p>
+      <p class="text-center">さいたまのちずをよみこんでるよ</p>
     </div>
   </div>
   <div :class="{ invisible: isLoading }" class="overflow-y-auto">
@@ -137,7 +137,7 @@ export default defineComponent({
 }
 .flash-message {
   @apply absolute h-2 text-opacity-50 lg:text-lg text-xs whitespace-pre;
-  top: -4.4em;
+  top: -4.5em;
   left: 1.2em;
 }
 /* https://saruwakakun.com/html-css/reference/speech-bubble */

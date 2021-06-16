@@ -16,7 +16,7 @@ export default defineComponent({
       defaultView: {
         latitude: 36.0094674,
         longitude: 139.3325361,
-        zoom: 9,
+        zoom: 8,
       },
       minZoom: 8,
       maxZoom: 13,
