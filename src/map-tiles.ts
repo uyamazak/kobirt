@@ -92,6 +92,8 @@ export const setTileLayer = (map: L.Map) => {
 export const removeTileLayer = () => {
   if (tileLayer) {
     tileLayer.remove()
+  }
+  if (attribution) {
     attribution.remove()
   }
 }
