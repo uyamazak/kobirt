@@ -11,9 +11,9 @@
     </div>
     <nav class="fixed w-full z-1000 bg-gray-50 bg-opacity-90 bottom-0 max-h-64">
       <div class="flex">
-        <div class="w-1/3 pt-2 text-center">
-          <div class="h-1 text-opacity-50 lg:text-lg text-xs">
-            {{ message }}
+        <div class="w-1/3 pt-2 text-center relative">
+          <div v-if="message" class="flash-message">
+            <div class="fukidasi">{{ message }}</div>
           </div>
           <ToriFront
             :reverse-x="toriActionCount % 2 !== 0"
@@ -55,14 +55,11 @@
 <script lang="ts">
 import * as L from 'leaflet'
 import { defineComponent, computed, onMounted, PropType } from 'vue'
-import ToriFront from './components/ToriFront.vue'
-import ToriSide from './components/ToriSide.vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
 import { InitMapOptions } from './types'
 import { initLeafletMap } from './map-logics'
 import { changeMessage } from './message'
-
 import {
   isLoadingGeoJson,
   isLoadingContents,
@@ -75,7 +72,12 @@ import {
   currentMunicipal,
   municipalityStates,
 } from './states'
+import ToriFront from './components/ToriFront.vue'
+import ToriSide from './components/ToriSide.vue'
 
+interface ToriConfig extends Omit<InitMapOptions, 'mapHTMLElement'> {
+  contentsJsonUrl: string
+}
 export default defineComponent({
   name: 'Tori',
   components: {
@@ -83,8 +85,8 @@ export default defineComponent({
     ToriSide,
   },
   props: {
-    initMapOptions: {
-      type: Object as PropType<Omit<InitMapOptions, 'mapHTMLElement'>>,
+    config: {
+      type: Object as PropType<ToriConfig>,
       required: true,
     },
   },
@@ -95,9 +97,9 @@ export default defineComponent({
       if (mapRef.value) {
         map = await initLeafletMap({
           mapHTMLElement: mapRef.value,
-          ...props.initMapOptions,
+          ...props.config,
         })
-        await loadContents(props.initMapOptions.contentsJsonUrl)
+        await loadContents(props.config.contentsJsonUrl)
         changeMessage()
       }
     })
@@ -128,9 +130,42 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss" scoped>
 .leaflet-container .leaflet-control-attribution {
   font-size: 10px;
   line-height: 1.2;
+}
+.flash-message {
+  @apply absolute h-2 text-opacity-50 lg:text-lg text-xs whitespace-pre;
+  top: -4.4em;
+  left: 1.2em;
+}
+/* https://saruwakakun.com/html-css/reference/speech-bubble */
+.fukidasi {
+  @apply relative inline-block my-1em py-7px px-10px max-w-120px max-w-full leading-normal bg-white;
+  color: #555;
+  border: solid 2px #9a9899;
+  border-radius: 10px;
+}
+.fukidasi:before {
+  @apply absolute;
+  content: "";
+  bottom: -24px;
+  left: 50%;
+  margin-left: -16px;
+  border: 12px solid transparent;
+  border-top: 12px solid #FFF;
+  z-index: 2;
+}
+
+.fukidasi:after {
+  @apply absolute;
+  content: "";
+  bottom: -30px;
+  left: 50%;
+  margin-left: -19px;
+  border: 15px solid transparent;
+  border-top: 15px solid #9a9899;
+  z-index: 1;
 }
 </style>

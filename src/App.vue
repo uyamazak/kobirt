@@ -1,5 +1,5 @@
 <template>
-  <Tori :init-map-options="initMapOptions" />
+  <Tori :config="toriConfig" />
 </template>
 
 <script lang="ts">
@@ -10,12 +10,12 @@ export default defineComponent({
   name: 'App',
   components: { Tori },
   setup() {
-    const initMapOptions = {
+    const toriConfig = {
       leftTopLatLng: { latitude: 36.28881, longitude: 138.5722623 },
       rightBottomLatLng: { latitude: 35.553613, longitude: 139.9509493 },
       defaultView: {
         latitude: 36.0094674,
-        longitude: 139.4025361,
+        longitude: 139.3325361,
         zoom: 9,
       },
       minZoom: 8,
@@ -23,7 +23,7 @@ export default defineComponent({
       geoJsonUrl: '/geojson/saitama.geojson',
       contentsJsonUrl: '/contents-json/saitama.json',
     }
-    return { initMapOptions }
+    return { toriConfig }
   },
 })
 </script>

@@ -41,5 +41,9 @@ export const getFullName = (municipalCode: string) => {
   return [
     getContentItem(municipalCode)?.countryName ?? null,
     getContentItem(municipalCode)?.name ?? '',
-  ].join(' ')
+  ].join('')
+}
+
+export const getFurigana = (municipalCode: string) => {
+  return getContentItem(municipalCode)?.furigana ?? ''
 }
