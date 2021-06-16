@@ -11,7 +11,7 @@ import {
   currentMunicipal,
   municipalityStates,
 } from './states'
-import { initMapOptions } from './types'
+import { InitMapOptions, IntegratedLayers } from './types'
 import { changeTileLayer } from './map-tiles'
 import { getFullName } from './contents'
 import {
@@ -21,8 +21,6 @@ import {
 } from './layer-styles'
 import { GeoJsonObject } from 'geojson'
 import { changeMessage, setFlushMessage } from './message'
-
-type IntegratedLayers = { [key: string]: L.Layer[] }
 
 const getMuniCode = (feature: GeoJSON.Feature): string => {
   return feature.properties?.N03_007 ?? ''
@@ -38,7 +36,7 @@ const changeIncorrectLevel = (num: number) => {
   }
 }
 export const initLeafletMap = async (
-  options: initMapOptions
+  options: InitMapOptions
 ): Promise<L.Map> => {
   const {
     mapHTMLElement,

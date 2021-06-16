@@ -21,7 +21,7 @@ export interface LatLngZoom {
   longitude: number
   zoom: number
 }
-export interface initMapOptions {
+export interface InitMapOptions {
   mapHTMLElement: HTMLElement
   leftTopLatLng: LatLng
   rightBottomLatLng: LatLng
@@ -31,3 +31,4 @@ export interface initMapOptions {
   geoJsonUrl: string
   contentsJsonUrl: string
 }
+export type IntegratedLayers = { [key: string]: L.Layer[] }

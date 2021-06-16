@@ -59,7 +59,7 @@ import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
-import { initMapOptions } from './types'
+import { InitMapOptions } from './types'
 import { initLeafletMap } from './map-logics'
 import { changeMessage } from './message'
 
@@ -84,7 +84,7 @@ export default defineComponent({
   },
   props: {
     initMapOptions: {
-      type: Object as PropType<Omit<initMapOptions, 'mapHTMLElement'>>,
+      type: Object as PropType<Omit<InitMapOptions, 'mapHTMLElement'>>,
       required: true,
     },
   },
