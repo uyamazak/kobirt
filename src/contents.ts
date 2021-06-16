@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { contents, isLoadingContents } from './refs'
+import { contents, isLoadingContents } from './states'
 
 export interface ContentItem {
   code?: string

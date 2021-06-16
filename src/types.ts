@@ -12,3 +12,22 @@ interface MunicipalityOption {
 }
 
 export type MunicipalityOptions = { [id: string]: MunicipalityOption }
+export interface LatLng {
+  latitude: number
+  longitude: number
+}
+export interface LatLngZoom {
+  latitude: number
+  longitude: number
+  zoom: number
+}
+export interface initMapOptions {
+  mapHTMLElement: HTMLElement
+  leftTopLatLng: LatLng
+  rightBottomLatLng: LatLng
+  defaultView: LatLngZoom
+  minZoom: number
+  maxZoom: number
+  geoJsonUrl: string
+  contentsJsonUrl: string
+}
