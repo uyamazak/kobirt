@@ -31,4 +31,6 @@ export interface InitMapOptions {
   geoJsonUrl: string
   contentsJsonUrl: string
 }
-export type IntegratedLayers = { [key: string]: L.Layer[] }
+export interface IntegratedLayers {
+  [key: string]: L.Layer[]
+}
