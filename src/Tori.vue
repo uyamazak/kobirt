@@ -35,7 +35,7 @@
             @click="toriClick"
           />
         </div>
-        <div class="w-2/3 pt-5 text-sync">
+        <div class="w-2/3 pt-5 text-sync-lg">
           <div v-if="currentMunicipal">
             <ruby>
               {{ currentMunicipal.countryFurigana }} <rp>(</rp
@@ -150,7 +150,10 @@ export default defineComponent({
   line-height: 1.2;
 }
 .text-sync {
-  @apply text-xs sm:text-sm md:text-base lg:text-xl;
+  @apply text-xs sm:text-sm md:text-base lg:text-lg;
+}
+.text-sync-lg {
+  @apply text-sm sm:text-base md:text-lg lg:text-xl;
 }
 .flash-message {
   @apply absolute h-2 text-opacity-50 whitespace-pre;
