@@ -1,6 +1,15 @@
 import * as L from 'leaflet'
 import axios from 'axios'
+import { GeoJsonObject } from 'geojson'
 import { getPastelColors, incorrectColors } from './colors'
+import { getFullName, getFurigana } from './contents'
+import {
+  defaultStyle,
+  makeIncorrectStyle,
+  makeSelectedStyle,
+} from './layer-styles'
+import { changeTileLayer } from './map-tiles'
+import { changeMessage, setFlashMessage } from './message'
 import {
   isLoadingGeoJson,
   toriActionCount,
@@ -11,16 +20,7 @@ import {
   currentMunicipal,
   municipalityStates,
 } from './states'
-import { InitMapOptions, IntegratedLayers } from './types'
-import { changeTileLayer } from './map-tiles'
-import { getFullName, getFurigana } from './contents'
-import {
-  defaultStyle,
-  makeIncorrectStyle,
-  makeSelectedStyle,
-} from './layer-styles'
-import { GeoJsonObject } from 'geojson'
-import { changeMessage, setFlashMessage } from './message'
+import { InitMapOptions, IntegratedLayers, AnswerResult } from './types'
 
 const getMuniCode = (feature: GeoJSON.Feature): string => {
   return feature.properties?.N03_007 ?? ''
@@ -35,6 +35,18 @@ const changeIncorrectLevel = (num: number) => {
     incorrectLevel.value = max
   }
 }
+
+const updateCorrectStates = (event: AnswerResult) => {
+  if (event === 'correct') {
+    correctCount.value++
+    changeIncorrectLevel(-2)
+    municipalQueue.value.shift()
+  } else if (event === 'incorrect') {
+    incorrectCount.value++
+    changeIncorrectLevel(1)
+  }
+}
+
 export const initLeafletMap = async (
   options: InitMapOptions
 ): Promise<L.Map> => {
@@ -69,11 +81,16 @@ export const initLeafletMap = async (
   await loadGeojson(map, geoJsonUrl)
   return map
 }
-const isCorrect = (code: string): boolean => {
+const isCorrectMunicipal = (code: string): boolean => {
   return code === currentMunicipal?.value?.code
 }
 
-const geoJsonFeatureClickHandler: (
+const openTooltipTemporarily = (layer: L.Layer, timerMs = 2000) => {
+  layer.openTooltip()
+  setTimeout(() => layer.closeTooltip(), timerMs)
+}
+
+const featureClickHandler: (
   integratedLayers: IntegratedLayers
 ) => L.LeafletMouseEventHandlerFn = (integratedLayers) => {
   return (event) => {
@@ -100,7 +117,7 @@ const geoJsonFeatureClickHandler: (
     })
     const furigana = getFurigana(code)
     for (const layer of layers) {
-      // すでに正解したやつ
+      // すでにせいかいしたやつ
       if (municipalityStates[code].corrected) {
         setFlashMessage(`${furigana}\nだね`)
         layer.setStyle(
@@ -109,22 +126,16 @@ const geoJsonFeatureClickHandler: (
             color: colors[0],
           })
         )
-        return
-      }
-      if (isCorrect(code)) {
+      } else if (isCorrectMunicipal(code)) {
         setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
-        municipalityStates[code].corrected = true
-        correctCount.value++
-        changeIncorrectLevel(-2)
-        municipalQueue.value.shift()
         layer.setStyle(selectedStyle)
+        updateCorrectStates('correct')
+        municipalityStates[code].corrected = true
       } else {
         setFlashMessage(`ちがうよ それは\n${furigana}`)
-        changeIncorrectLevel(1)
-        incorrectCount.value++
         layer.setStyle(incorrectStyle)
-        clickedLayer.openTooltip()
-        setTimeout(() => clickedLayer.closeTooltip(), 2000)
+        updateCorrectStates('incorrect')
+        openTooltipTemporarily(clickedLayer, 2000)
       }
       changeMessage()
     }
@@ -154,7 +165,7 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
   isLoadingGeoJson.value = true
   const rawJson = await axios.get<GeoJsonObject>(geojson)
   const geoJsonObject = rawJson.data
-  // 飛び地をあわせたもの
+  // とびち がべつになってるから あわせたやつ
   const integratedLayers: IntegratedLayers = {}
 
   isLoadingGeoJson.value = false
@@ -177,7 +188,7 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
         municipalsTmp.push(code)
       }
       layer.on({
-        click: geoJsonFeatureClickHandler(integratedLayers),
+        click: featureClickHandler(integratedLayers),
       })
     },
   })

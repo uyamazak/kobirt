@@ -16,12 +16,14 @@ export interface LatLng {
   latitude: number
   longitude: number
 }
-export interface LatLngZoom {
-  latitude: number
-  longitude: number
+export interface LatLngZoom extends LatLng {
   zoom: number
 }
+export interface IntegratedLayers {
+  [key: string]: L.Layer[]
+}
 export interface InitMapOptions {
+  prefectureName: string
   mapHTMLElement: HTMLElement
   leftTopLatLng: LatLng
   rightBottomLatLng: LatLng
@@ -30,6 +32,8 @@ export interface InitMapOptions {
   maxZoom: number
   geoJsonUrl: string
 }
-export interface IntegratedLayers {
-  [key: string]: L.Layer[]
+export interface ToriConfig extends Omit<InitMapOptions, 'mapHTMLElement'> {
+  contentsJsonUrl: string
 }
+
+export type AnswerResult = 'correct' | 'incorrect'

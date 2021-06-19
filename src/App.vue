@@ -5,12 +5,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Tori from './Tori.vue'
+import { ToriConfig } from './types'
 
 export default defineComponent({
   name: 'App',
   components: { Tori },
   setup() {
-    const toriConfig = {
+    const toriConfig: ToriConfig = {
+      prefectureName: 'さいたま',
+      geoJsonUrl: '/geojson/saitama.geojson',
+      contentsJsonUrl: '/contents-json/saitama.json',
       leftTopLatLng: { latitude: 36.28881, longitude: 138.5722623 },
       rightBottomLatLng: { latitude: 35.553613, longitude: 139.9509493 },
       defaultView: {
@@ -20,8 +24,6 @@ export default defineComponent({
       },
       minZoom: 8,
       maxZoom: 13,
-      geoJsonUrl: '/geojson/saitama.geojson',
-      contentsJsonUrl: '/contents-json/saitama.json',
     }
     return { toriConfig }
   },
