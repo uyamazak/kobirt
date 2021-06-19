@@ -21,7 +21,8 @@
               left-1/10
               top-[-60px]
               sm:(left-1/4)
-              md:(left-1/4 top-[-65px])
+              md:(left-1/4
+              top-[-65px])
               lg:(left-1/3
               top-[-70px])
             "
