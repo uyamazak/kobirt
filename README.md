@@ -1,15 +1,15 @@
 <img src="docs/img/tori-b1.png" alt="とりさん" width="300" />
 
+[![ci](https://github.com/uyamazak/kobirt/actions/workflows/ci.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/ci.yml?query=workflow%3Aci)
 [![firebase-hosting-merge](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
 [![firebase-hosting-pull-request](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
 
-
-# 🐦 こばと
+# こばと🐦
 とりさんが さいたまけんの しくちょうそんを いろぬりするよ
 
 <img src="docs/img/sample_20210619.png " width="200">
 
-どうやってぬっているかは ひみつだよ
+どうやってぬっているかは ひみつ
 
 # でも
 うごくけど まだ ほぞんするきのうが ないから さいよみこみ したりすると きえるよ
@@ -17,7 +17,7 @@
 https://sirakobirt.web.app/
 
 # なぜ
-みんな さいたまけんの しくちょうそんしらないでしょ
+みんな さいたまけんの しくちょうそん しらないでしょ
 
 ぜんぶ しってるのは とりさんぐらいだよ
 
@@ -25,7 +25,7 @@ https://sirakobirt.web.app/
 とりさんのいらすとは [onoonoono5](https://twitter.com/onoonoono5) さん がかいたよ
 
 # てくのろじー
-
+どんな ぎじゅつ を つかっているのか せつめいするよ
 ## ぷろぐらみんぐ
 [Vite](https://vitejs.dev) と
 
@@ -39,8 +39,7 @@ https://sirakobirt.web.app/
 
 と [TypeScript](https://www.typescriptlang.org/) でつくってるよ
 
-
-かいはつかんきょう くそ はやいみたい
+Vite の かいはつかんきょう くそ はやい
 
 ## すたいる
 [Windi CSS](https://windicss.org/) をつかってるよ
@@ -54,22 +53,22 @@ https://sirakobirt.web.app/
 ## ほすてぃんぐ
 [Firebase Hosting](https://firebase.google.com/docs/hosting?hl=ja) つかってるよ
 
-ぷるりくで ぷれびゅー URL つくれるようになって べんりだよ
+ぷるりくで ぷれびゅー つくれるようになって べんりだよ
 
 ## じどうか
 [GitHub Actions](https://github.com/uyamazak/kobirt/actions) つかってるよ
 
 public ただなのはうれしいね
-### ちずのらいぶらり
+## ちずのらいぶらり
 [Leaflet](https://leafletjs.com/)をつかってるよ Google マップ じゃなくても つくれるよ
 
 <img width="200" src="https://rawgit.com/Leaflet/Leaflet/master/src/images/logo.svg" alt="Leaflet" />
 
-### ちずのでーた
+## ちずのでーた
 [国土交通省の"行政区域データ"](https://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N03.html) のgeojsonをつかってるよ
 
 
-### ちずたいる
+## ちずたいる
 [国土地理院の"地理院タイル"](https://maps.gsi.go.jp/development/sample.html) をつかってるよ
 
 みんなも なにかつくってみたら いいんじゃないかな ぜいきんのゆうこうかつようだよ
