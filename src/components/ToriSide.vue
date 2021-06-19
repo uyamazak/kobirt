@@ -1,5 +1,5 @@
 <template>
-  <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <svg class="rotate" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
     <defs />
     <g>
       <g>
@@ -65,3 +65,16 @@ export default defineComponent({
   name: 'ToriSide',
 })
 </script>
+<style scoped>
+@keyframes rotation {
+  0% {
+    transform: rotate(-360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.rotate {
+  animation: 2s linear infinite rotation;
+}
+</style>
