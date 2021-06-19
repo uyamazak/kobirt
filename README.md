@@ -1,77 +1,81 @@
-# kobirt (こばと ・ 小鳩)
-とりさんといっしょに地図を色ぬりしながら埼玉県の市区町村に詳しくなれるブラウザゲームです。
+<img src="docs/img/tori-b1.png" alt="とりさん" width="300" />
 
-正解すると埼玉県がカラフルに彩られます。
+[![firebase-hosting-merge](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
+[![firebase-hosting-pull-request](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
 
-![](doc/img/sample_20210430.png "サンプル")
 
-# Demo
-絶賛開発中。問題に合わせて色塗りできますが、まだ保存機能がないので再読込すると消えます。
+# 🐦 こばと
+とりさんが さいたまけんの しくちょうそんを いろぬりするよ
+
+<img src="docs/img/sample_20210619.png " width="200">
+
+どうやってぬっているかは ひみつだよ
+
+# でも
+うごくけど まだ ほぞんするきのうが ないから さいよみこみ したりすると きえるよ
 
 https://sirakobirt.web.app/
 
-# Why
-自分が住んでいる県の市区町村を近所以外全然知らないのでもったいない気がしました。
+# なぜ
+みんな さいたまけんの しくちょうそんしらないでしょ
 
-コロナ禍もあり、住んでいる都道府県に出かける機会が増えそうなので作ってみました。
+ぜんぶ しってるのは とりさんぐらいだよ
+
+# いらすと
+とりさんのいらすとは [onoonoono5](https://twitter.com/onoonoono5) さん がかいたよ
+
+# てくのろじー
+
+## ぷろぐらみんぐ
+[Vite](https://vitejs.dev) と
+
+<a href="https://vitejs.dev" target="_blank" rel="noopener noreferrer">
+    <img width="120" src="https://vitejs.dev/logo.svg" alt="Vite logo">
+</a>
+
+[Vue3](https://vuejs.org)
+
+<a href="https://vuejs.org" target="_blank" rel="noopener noreferrer"><img width="120" src="https://vuejs.org/images/logo.png" alt="Vue logo"></a>
+
+と [TypeScript](https://www.typescriptlang.org/) でつくってるよ
 
 
-# Character Design
-とりさんは[onoonoono5](https://twitter.com/onoonoono5)さんに書いていただきました。
+かいはつかんきょう くそ はやいみたい
 
-# Technologies
-### フレームワークなど
-Vite + Vue3 + TypeScript
+## すたいる
+[Windi CSS](https://windicss.org/) をつかってるよ
 
-https://github.com/vitejs/vite
+<a href="https://github.com/windicss/windicss/wiki">
+  <img src="https://next.windicss.org/assets/logo.svg" alt="Windi CSS Logo" width="120" /><br>
+</a>
 
-開発環境クソ速いです
+これも くそ はやいし べんりだよ
 
-### CSSフレームワーク
-Windi CSS
+## ほすてぃんぐ
+[Firebase Hosting](https://firebase.google.com/docs/hosting?hl=ja) つかってるよ
 
-https://windicss.org/
+ぷるりくで ぷれびゅー URL つくれるようになって べんりだよ
 
-開発中もクソ速いし、使ってるCSSだけ書き出せるのでクソ速いです。
+## じどうか
+[GitHub Actions](https://github.com/uyamazak/kobirt/actions) つかってるよ
 
-### ホスティング
+public ただなのはうれしいね
+### ちずのらいぶらり
+[Leaflet](https://leafletjs.com/)をつかってるよ Google マップ じゃなくても つくれるよ
 
-Firebase
+<img width="200" src="https://rawgit.com/Leaflet/Leaflet/master/src/images/logo.svg" alt="Leaflet" />
 
-PRでプレビューURL作成できるようになって便利。
+### ちずのでーた
+[国土交通省の"行政区域データ"](https://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N03.html) のgeojsonをつかってるよ
 
-### CI/CD
-GitHub Actions
 
-public無料は正義
-### 地図ライブラリ
-Leafletを使っています。TypeScriptネイティブじゃないけど@typesでなんとかなってる。
+### ちずたいる
+[国土地理院の"地理院タイル"](https://maps.gsi.go.jp/development/sample.html) をつかってるよ
 
-https://leafletjs.com/
+みんなも なにかつくってみたら いいんじゃないかな ぜいきんのゆうこうかつようだよ
 
-### 境界データ
-行政区域データのgeojsonを使ってます。
+# かいはつしゃ
+[uyamazak](https://github.com/uyamazak) しゅみで うぇぶの かいはつ してるみたい
 
-https://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N03.html
-### 地図タイル
-地理院タイルを使ってます。
-
-地理院タイルを用いたサイト構築サンプル集
-
-https://maps.gsi.go.jp/development/sample.html
-# Roadmap
-- 市区町村のよみがなつける
-- 市区町村ごとにヒントとか、豆知識の文章つける
-- ブラウザに保存機能
-- サーバー側に保存機能（Firebase）
-- 共有機能
-
-# Contributing
-準備中
-
-# Author
-
-[uyamazak](https://github.com/uyamazak)
-
-# License
-Apache (イラストを除く)
+# らいせんす
+Apache (とりさんのイラストをのぞく)

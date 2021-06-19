@@ -12,8 +12,21 @@
     <nav class="fixed w-full z-1000 bg-gray-50 bg-opacity-90 bottom-0 max-h-64">
       <div class="flex">
         <div class="w-1/3 pt-2 text-center relative">
-          <div v-if="message" class="flash-message">
-            <div class="fukidasi">{{ message }}</div>
+          <div
+            v-if="message"
+            class="
+              flash-message
+              text-sync
+              inline-block
+              left-1/10
+              top-[-60px]
+              sm:(left-1/4)
+              md:(left-1/4 top-[-65px])
+              lg:(left-1/3
+              top-[-70px])
+            "
+          >
+            <Fukidashi :message="message" />
           </div>
           <ToriFront
             :reverse-x="toriActionCount % 2 !== 0"
@@ -21,18 +34,17 @@
             @click="toriClick"
           />
         </div>
-        <div class="w-2/3 pt-5 lg:text-lg">
+        <div class="w-2/3 pt-5 text-sync">
           <div v-if="currentMunicipal">
-            <ruby v-if="currentMunicipal.countryName">
-              {{ currentMunicipal.countryName }} <rp>(</rp
-              ><rt>{{ currentMunicipal.countryFurigana }}</rt
+            <ruby>
+              {{ currentMunicipal.countryFurigana }} <rp>(</rp
+              ><rt>{{ currentMunicipal.countryName }}</rt
               ><rp>)</rp>
             </ruby>
+            &nbsp;
             <ruby>
-              {{ currentMunicipal.name }} <rp>(</rp
-              ><rt v-if="currentMunicipal.furigana">{{
-                currentMunicipal.furigana
-              }}</rt
+              {{ currentMunicipal.furigana }} <rp>(</rp
+              ><rt>{{ currentMunicipal.name }}</rt
               ><rp>)</rp>
             </ruby>
             はどこ？
@@ -43,11 +55,16 @@
     </nav>
     <div
       v-if="!isLoading"
-      class="fixed bottom-0 z-2000 right-5 pb-2 text-right lg:text-md text-xs"
+      class="fixed bottom-0 z-2000 right-8px pb-8px text-right text-sync"
     >
-      <span class="pr-3">せいかい: {{ correctCount }}</span>
-      <span class="pr-3">まちがい: {{ incorrectCount }}</span>
       <span>のこり: {{ municipalQueue.length }}</span>
+      <a href="https://github.com/uyamazak/kobirt" target="_blank">
+        <img
+          class="opacity-50 ml-8px max-w-16px lg:(max-w-32px) inline-block"
+          alt="github"
+          src="/img/github.png"
+        />
+      </a>
     </div>
   </div>
 </template>
@@ -57,7 +74,7 @@ import * as L from 'leaflet'
 import { defineComponent, computed, onMounted, PropType } from 'vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
-import { InitMapOptions } from './types'
+import { ToriConfig } from './types'
 import { initLeafletMap } from './map-logics'
 import { changeMessage } from './message'
 import {
@@ -70,19 +87,17 @@ import {
   mapRef,
   municipalQueue,
   currentMunicipal,
-  municipalityStates,
 } from './states'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
+import Fukidashi from './components/Fukidashi.vue'
 
-interface ToriConfig extends Omit<InitMapOptions, 'mapHTMLElement'> {
-  contentsJsonUrl: string
-}
 export default defineComponent({
   name: 'Tori',
   components: {
     ToriFront,
     ToriSide,
+    Fukidashi,
   },
   props: {
     config: {
@@ -114,14 +129,11 @@ export default defineComponent({
 
     return {
       isLoading,
-      isLoadingGeoJson,
-      isLoadingContents,
       currentMunicipal,
       correctCount,
       incorrectCount,
       message,
       mapRef,
-      municipalityStates,
       municipalQueue,
       toriActionCount,
       toriClick,
@@ -135,37 +147,10 @@ export default defineComponent({
   font-size: 10px;
   line-height: 1.2;
 }
+.text-sync {
+  @apply text-xs sm:text-sm md:text-base lg:text-xl;
+}
 .flash-message {
-  @apply absolute h-2 text-opacity-50 lg:text-lg text-xs whitespace-pre;
-  top: -4.5em;
-  left: 1.2em;
-}
-/* https://saruwakakun.com/html-css/reference/speech-bubble */
-.fukidasi {
-  @apply relative inline-block my-1em py-7px px-10px max-w-120px max-w-full leading-normal bg-white;
-  color: #555;
-  border: solid 2px #9a9899;
-  border-radius: 10px;
-}
-.fukidasi:before {
-  @apply absolute;
-  content: '';
-  bottom: -24px;
-  left: 50%;
-  margin-left: -16px;
-  border: 12px solid transparent;
-  border-top: 12px solid #fff;
-  z-index: 2;
-}
-
-.fukidasi:after {
-  @apply absolute;
-  content: '';
-  bottom: -30px;
-  left: 50%;
-  margin-left: -19px;
-  border: 15px solid transparent;
-  border-top: 15px solid #9a9899;
-  z-index: 1;
+  @apply absolute h-2 text-opacity-50 whitespace-pre;
 }
 </style>
