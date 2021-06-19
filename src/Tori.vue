@@ -2,7 +2,7 @@
   <div v-if="isLoading" class="flex h-screen w-full z-3000 overflow-y-auto">
     <div class="m-auto">
       <ToriSide class="max-h-96" />
-      <p class="text-center">さいたまのちずをよみこんでるよ</p>
+      <p class="text-center">{{ prefectureName }} のちずを よみこんでるよ</p>
     </div>
   </div>
   <div :class="{ invisible: isLoading }" class="overflow-y-auto">
@@ -128,6 +128,7 @@ export default defineComponent({
     })
 
     return {
+      prefectureName: props.config.prefectureName,
       isLoading,
       currentMunicipal,
       correctCount,

@@ -23,6 +23,7 @@ export interface IntegratedLayers {
   [key: string]: L.Layer[]
 }
 export interface InitMapOptions {
+  prefectureName: string
   mapHTMLElement: HTMLElement
   leftTopLatLng: LatLng
   rightBottomLatLng: LatLng
