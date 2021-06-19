@@ -1,5 +1,9 @@
 <template>
-  <svg class="rotate" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    :class="rotateClass"
+    viewBox="0 0 500 500"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <defs />
     <g>
       <g>
@@ -60,21 +64,80 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+/**
+ * @url https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+ */
+function shuffle<T>(array: T[]): T[] {
+  let currentIndex = array.length
+  let temporaryValue, randomIndex
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex)
+    currentIndex -= 1
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex]
+    array[currentIndex] = array[randomIndex]
+    array[randomIndex] = temporaryValue
+  }
+  return array
+}
 export default defineComponent({
   name: 'ToriSide',
+  setup() {
+    const rotateClass = shuffle<string>([
+      'rotate-1',
+      'rotate-2',
+      'rotate-3',
+      'rotate-4',
+    ])[0]
+    return { rotateClass }
+  },
 })
 </script>
 <style scoped>
-@keyframes rotation {
+@keyframes rotation-1 {
   0% {
-    transform: rotate(-360deg);
+    transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
   }
 }
-.rotate {
-  animation: 2s linear infinite rotation;
+@keyframes rotation-2 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes rotation-3 {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(360deg);
+  }
+}
+@keyframes rotation-4 {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(360deg);
+  }
+}
+.rotate-1 {
+  animation: 2s linear infinite rotation-1;
+}
+.rotate-2 {
+  animation: 2s linear infinite rotation-2;
+}
+.rotate-3 {
+  animation: 2s linear infinite rotation-3;
+}
+.rotate-4 {
+  animation: 2s linear infinite rotation-3;
 }
 </style>
