@@ -68,7 +68,13 @@
       </a>
     </div>
     <div v-if="currentMapTile" class="fixed top-0 z-2000 text-xs">
-      <div :class="{ attributionOpen: isAttributionShown, attributionClose:!isAttributionShown }" class="bg-white p-3px">
+      <div
+        :class="{
+          attributionOpen: isAttributionShown,
+          attributionClose: !isAttributionShown,
+        }"
+        class="bg-white p-3px"
+      >
         <span class="mr-5px">出典</span>
         <a
           class="text-blue-500 underline"
@@ -187,13 +193,15 @@ export default defineComponent({
   @apply absolute h-2 text-opacity-50 whitespace-pre;
 }
 .attributionOpen {
-
 }
 .attributionClose {
   @apply max-h-1.5em overflow-hidden;
 }
 .attributionButton {
-  background: linear-gradient(to top, rgba(250, 252, 252, 0) 0%, rgba(250, 252, 252, 0.95) 90%);
+  background: linear-gradient(
+    to top,
+    rgba(250, 252, 252, 0) 0%,
+    rgba(250, 252, 252, 0.95) 90%
+  );
 }
-
 </style>
