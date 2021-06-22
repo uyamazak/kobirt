@@ -127,7 +127,7 @@ const featureClickHandler: (
           })
         )
       } else if (isCorrectMunicipal(code)) {
-        setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
+        setFlashMessage(`せいかい それが\n${furigana}`, 5 * 10000)
         layer.setStyle(selectedStyle)
         updateCorrectStates('correct')
         municipalityStates[code].corrected = true
