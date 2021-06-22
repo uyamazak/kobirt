@@ -67,7 +67,7 @@
         />
       </a>
     </div>
-    <div v-if="currentMapTile" class="fixed top-0 z-2000 text-xs">
+    <div v-if="currentMapTile" class="fixed top-0 z-2000 text-gray-500 text-xs">
       <div
         :class="{
           attributionOpen: isAttributionShown,
