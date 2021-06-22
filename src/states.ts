@@ -1,6 +1,6 @@
 import { ref, reactive } from 'vue'
 import { ContentsJSON, ContentItem } from './contents'
-import { MunicipalityOptions } from './types'
+import { MunicipalityOptions, MapTile } from './types'
 
 export const isLoadingGeoJson = ref<boolean>(false)
 export const isLoadingContents = ref<boolean>(false)
@@ -15,3 +15,5 @@ export const municipalQueue = ref<string[]>([])
 export const currentMunicipal = ref<ContentItem | null>(null)
 export const contents = ref<ContentsJSON>()
 export const municipalityStates = reactive<MunicipalityOptions>({})
+export const currentMapTile = ref<MapTile | null>(null)
+export const isAttributionShown = ref(false)

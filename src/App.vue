@@ -13,6 +13,7 @@ export default defineComponent({
   setup() {
     const toriConfig: ToriConfig = {
       prefectureName: 'さいたま',
+      /* 「国土数値情報（行政区域データ）」（国土交通省）（https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_0.html）を加工して作成 */
       geoJsonUrl: '/geojson/saitama.geojson',
       contentsJsonUrl: '/contents-json/saitama.json',
       leftTopLatLng: { latitude: 36.28881, longitude: 138.5722623 },

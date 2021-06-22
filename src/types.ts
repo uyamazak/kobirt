@@ -37,3 +37,23 @@ export interface ToriConfig extends Omit<InitMapOptions, 'mapHTMLElement'> {
 }
 
 export type AnswerResult = 'correct' | 'incorrect'
+
+/**
+ * https://maps.gsi.go.jp/development/ichiran.html
+ */
+export type TileName =
+  | 'seamlessphoto'
+  | 'blank'
+  | 'std'
+  | 'pale'
+  | 'relief'
+  | 'english'
+
+export type MapTile = {
+  name: string
+  url: string
+  attribution?: string
+}
+export type MapTiles = {
+  [key in TileName]: MapTile
+}
