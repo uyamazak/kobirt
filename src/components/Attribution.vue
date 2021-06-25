@@ -19,8 +19,10 @@
       target="_blank"
       >地理院タイル</a
     >
-    {{ currentMapTile.name }}
-    {{ currentMapTile.attribution }} | 境界データは<a
+    <span v-if="currentMapTile">
+      {{ currentMapTile.name }} {{ currentMapTile.attribution }}
+    </span>
+    | 境界データは<a
       class="text-blue-500 underline"
       href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_0.html"
       target="_blank"

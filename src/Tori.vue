@@ -55,7 +55,7 @@
       </div>
     </nav>
     <ul v-if="!isLoading" class="sub-menu text-sync">
-      <li><button @click="changeMapTile" class="text-3xl">🗾</button></li>
+      <li><button @click="changeMapTile" class="text-xl lg:(text-3xl)">🗾</button></li>
       <li>
         <span>せいかい: {{ correctCount }}</span>
       </li>
@@ -181,7 +181,7 @@ export default defineComponent({
 .sub-menu {
   @apply fixed bottom-0 z-2000 right-8px pb-8px text-right;
   li {
-    @apply inline-block mr-20px align-middle;
+    @apply inline-block mr-5px align-middle lg:(mr-20px);
   }
 }
 </style>
