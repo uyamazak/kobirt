@@ -6,7 +6,7 @@ import { getFullName, getFurigana } from './contents'
 import {
   defaultStyle,
   makeIncorrectStyle,
-  makeSelectedStyle,
+  makeCorrectedStyle,
 } from './layer-styles'
 import { changeTileLayer } from './map-tiles'
 import { changeMessage, setFlashMessage } from './message'
@@ -21,6 +21,7 @@ import {
   municipalityStates,
 } from './states'
 import { InitMapOptions, IntegratedLayers, AnswerResult } from './types'
+import { shuffle } from './libs'
 
 const getMuniCode = (feature: GeoJSON.Feature): string => {
   return feature.properties?.N03_007 ?? ''
@@ -40,7 +41,6 @@ const updateCorrectStates = (event: AnswerResult) => {
   if (event === 'correct') {
     correctCount.value++
     changeIncorrectLevel(-2)
-    municipalQueue.value.shift()
   } else if (event === 'incorrect') {
     incorrectCount.value++
     changeIncorrectLevel(1)
@@ -90,14 +90,28 @@ const openTooltipTemporarily = (layer: L.Layer, timerMs = 2000) => {
   setTimeout(() => layer.closeTooltip(), timerMs)
 }
 
+const isClickedByTori = (event: L.LeafletMouseEvent) => {
+  if (event.sourceTarget === 'tori') {
+    return true
+  } else {
+    return false
+  }
+}
+const isClickedByUser = (event: L.LeafletMouseEvent) => {
+  if (event.sourceTarget !== 'tori' && event.originalEvent.isTrusted) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const featureClickHandler: (
   integratedLayers: IntegratedLayers
 ) => L.LeafletMouseEventHandlerFn = (integratedLayers) => {
   return (event) => {
-    if (!event.originalEvent.isTrusted) {
+    if (!isClickedByUser(event) && !isClickedByTori(event)) {
       return
     }
-    toriActionCount.value++
     const clickedLayer = event.target
     const code = getMuniCode(clickedLayer.feature)
     if (!code) {
@@ -108,7 +122,7 @@ const featureClickHandler: (
     clickedLayer.bindTooltip(name, { interactive: false })
     const layers = integratedLayers[code]
     const colors = getPastelColors()
-    const selectedStyle = makeSelectedStyle({
+    const correctedStyle = makeCorrectedStyle({
       fillColor: colors[9],
       color: colors[0],
     })
@@ -116,24 +130,33 @@ const featureClickHandler: (
       fillColor: incorrectColors[incorrectLevel.value],
     })
     const furigana = getFurigana(code)
+    if (isClickedByUser(event)) {
+      toriActionCount.value++
+    }
+    //console.log(layers)
+    const isCorrected = isCorrectMunicipal(code)
     for (const layer of layers) {
-      // すでにせいかいしたやつ
-      if (municipalityStates[code].corrected) {
+      const isAlreadyCorrected = municipalityStates[code].corrected
+      if (isCorrected && !isAlreadyCorrected) {
+        municipalQueue.value.shift()
+      }
+      if (isAlreadyCorrected) {
+        // すでにせいかいしたやつ
         setFlashMessage(`${furigana}\nだね`)
-        layer.setStyle(
-          makeSelectedStyle({
-            fillColor: colors[9],
-            color: colors[0],
-          })
-        )
-      } else if (isCorrectMunicipal(code)) {
-        setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
-        layer.setStyle(selectedStyle)
-        updateCorrectStates('correct')
+        layer.setStyle(correctedStyle)
+      } else if (isCorrected) {
+        layer.setStyle(correctedStyle)
         municipalityStates[code].corrected = true
+        if (isClickedByTori(event)) {
+          setFlashMessage(`ここが \n${furigana} だよ`, 5 * 1000)
+          openTooltipTemporarily(clickedLayer, 5 * 1000)
+        } else {
+          setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
+          updateCorrectStates('correct')
+        }
       } else {
-        setFlashMessage(`ちがうよ それは\n${furigana}`)
         layer.setStyle(incorrectStyle)
+        setFlashMessage(`ちがうよ それは\n${furigana}`)
         updateCorrectStates('incorrect')
         openTooltipTemporarily(clickedLayer, 2000)
       }
@@ -141,33 +164,13 @@ const featureClickHandler: (
     }
   }
 }
-
-/**
- * @url https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
- */
-function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length
-  let temporaryValue, randomIndex
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex -= 1
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex]
-    array[currentIndex] = array[randomIndex]
-    array[randomIndex] = temporaryValue
-  }
-  return array
-}
+// とびち がべつになってるから あわせたやつ
+const integratedLayers: IntegratedLayers = {}
 
 const loadGeojson = async (map: L.Map, geojson: string) => {
   isLoadingGeoJson.value = true
   const rawJson = await axios.get<GeoJsonObject>(geojson)
   const geoJsonObject = rawJson.data
-  // とびち がべつになってるから あわせたやつ
-  const integratedLayers: IntegratedLayers = {}
-
   isLoadingGeoJson.value = false
   if (!geoJsonObject) {
     console.error('geojsonの読み込みに失敗しました')
@@ -194,4 +197,19 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
   })
   municipalQueue.value = shuffle<string>(municipalsTmp)
   map.addLayer(geoJson)
+}
+
+export const clickLeyer = (code: string): void => {
+  if (integratedLayers[code]) {
+    integratedLayers[code].forEach((layer) => {
+      // 飛び地対策
+      if (!municipalityStates[code].corrected) {
+        layer.fireEvent('click', { sourceTarget: 'tori' })
+      }
+    })
+  }
+}
+
+export const shuffleMunicipalQueue = () => {
+  municipalQueue.value = shuffle(municipalQueue.value)
 }

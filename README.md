@@ -4,7 +4,7 @@
 [![firebase-hosting-merge](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
 [![firebase-hosting-pull-request](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
 
-# こばと🐦
+# こばと 🕊️
 とりさんが さいたまけんの しくちょうそんを いろぬりするよ
 
 <img src="docs/img/sample_20210619.png " width="200">

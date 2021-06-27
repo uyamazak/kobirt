@@ -31,7 +31,7 @@
           </div>
           <ToriFront
             :reverse-x="toriActionCount % 2 !== 0"
-            class="max-h-64"
+            class="max-h-64 select-none"
             @click="toriClick"
           />
         </div>
@@ -50,52 +50,30 @@
             </ruby>
             はどこ？
           </div>
-          <div v-else-if="!isLoading">おわりだよ {{ currentMunicipal }}</div>
+          <div v-else-if="!isLoading">おしまい</div>
         </div>
       </div>
     </nav>
-    <div
-      v-if="!isLoading"
-      class="fixed bottom-0 z-2000 right-8px pb-8px text-right text-sync"
-    >
-      <span>のこり: {{ municipalQueue.length }}</span>
-      <a href="https://github.com/uyamazak/kobirt" target="_blank">
-        <img
-          class="opacity-50 ml-8px max-w-16px lg:(max-w-32px) inline-block"
-          alt="github"
-          src="/img/github.png"
-        />
-      </a>
-    </div>
+    <ul v-if="!isLoading" class="sub-menu text-sync">
+      <li><button @click="changeMapTile" class="text-xl lg:(text-3xl)">🗾</button></li>
+      <li>
+        <span>せいかい: {{ correctCount }}</span>
+      </li>
+      <li>
+        <span>のこり: {{ municipalQueue.length }}</span>
+      </li>
+      <li>
+        <a href="https://github.com/uyamazak/kobirt" target="_blank">
+          <img
+            class="opacity-50 ml-8px max-w-16px lg:(max-w-32px) inline-block"
+            alt="github"
+            src="/img/github.png"
+          />
+        </a>
+      </li>
+    </ul>
     <div v-if="currentMapTile" class="fixed top-0 z-2000 text-gray-500 text-xs">
-      <div
-        :class="{
-          attributionOpen: isAttributionShown,
-          attributionClose: !isAttributionShown,
-        }"
-        class="bg-white p-3px"
-      >
-        <span class="mr-5px">出典</span>
-        <a
-          class="text-blue-500 underline"
-          href="https://maps.gsi.go.jp/development/ichiran.html"
-          target="_blank"
-          >地理院タイル</a
-        >
-        {{ currentMapTile.name }}
-        {{ currentMapTile.attribution }} 境界データは<a
-          class="text-blue-500 underline"
-          href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_0.html"
-          target="_blank"
-          >「国土数値情報（行政区域データ）」（国土交通省）</a
-        >を加工して利用
-      </div>
-      <div class="text-gray-500 text-center attributionButton">
-        <button @click="isAttributionShown = !isAttributionShown">
-          <span v-if="isAttributionShown">▲</span>
-          <span v-else>▼</span>
-        </button>
-      </div>
+      <Attribution />
     </div>
   </div>
 </template>
@@ -106,7 +84,7 @@ import { defineComponent, computed, onMounted, PropType } from 'vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
 import { ToriConfig } from './types'
-import { initLeafletMap } from './map-logics'
+import { initLeafletMap, clickLeyer } from './map-logics'
 import { changeMessage } from './message'
 import {
   isLoadingGeoJson,
@@ -124,6 +102,7 @@ import {
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
 import Fukidashi from './components/Fukidashi.vue'
+import Attribution from './components/Attribution.vue'
 
 export default defineComponent({
   name: 'Tori',
@@ -131,6 +110,7 @@ export default defineComponent({
     ToriFront,
     ToriSide,
     Fukidashi,
+    Attribution,
   },
   props: {
     config: {
@@ -151,8 +131,13 @@ export default defineComponent({
         changeMessage()
       }
     })
-    const toriClick = () => {
+    const changeMapTile = () => {
       changeTileLayer(map)
+    }
+    const toriClick = () => {
+      if (municipalQueue.value[0]) {
+        clickLeyer(municipalQueue.value[0])
+      }
       toriActionCount.value++
     }
 
@@ -172,6 +157,7 @@ export default defineComponent({
       toriActionCount,
       currentMapTile,
       isAttributionShown,
+      changeMapTile,
       toriClick,
     }
   },
@@ -192,16 +178,10 @@ export default defineComponent({
 .flash-message {
   @apply absolute h-2 text-opacity-50 whitespace-pre;
 }
-.attributionOpen {
-}
-.attributionClose {
-  @apply max-h-1.5em overflow-hidden;
-}
-.attributionButton {
-  background: linear-gradient(
-    to top,
-    rgba(250, 252, 252, 0) 0%,
-    rgba(250, 252, 252, 0.95) 90%
-  );
+.sub-menu {
+  @apply fixed bottom-0 z-2000 right-8px pb-8px text-right;
+  li {
+    @apply inline-block mr-5px align-middle lg:(mr-20px);
+  }
 }
 </style>
