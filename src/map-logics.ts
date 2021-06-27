@@ -133,27 +133,26 @@ const featureClickHandler: (
     if (isClickedByUser(event)) {
       toriActionCount.value++
     }
-    console.log(layers)
+    //console.log(layers)
     const isCorrected = isCorrectMunicipal(code)
-    const isAlreadyCorrected = municipalityStates[code].corrected
-    if (isCorrected) {
-      municipalQueue.value.shift()
-    }
     for (const layer of layers) {
-      if (isCorrected) {
-        layer.setStyle(correctedStyle)
+      const isAlreadyCorrected = municipalityStates[code].corrected
+      if (isCorrected && !isAlreadyCorrected) {
+        municipalQueue.value.shift()
+      }
+      if (isAlreadyCorrected) {
         // すでにせいかいしたやつ
-        if (isAlreadyCorrected) {
-          setFlashMessage(`${furigana}\nだね`)
+        setFlashMessage(`${furigana}\nだね`)
+        layer.setStyle(correctedStyle)
+      } else if (isCorrected) {
+        layer.setStyle(correctedStyle)
+        municipalityStates[code].corrected = true
+        if (isClickedByTori(event)) {
+          setFlashMessage(`ここが \n${furigana} だよ`, 5 * 1000)
+          openTooltipTemporarily(clickedLayer, 5 * 1000)
         } else {
-          municipalityStates[code].corrected = true
-          if (isClickedByTori(event)) {
-            setFlashMessage(`ここが \n${furigana} だよ`, 5 * 1000)
-            openTooltipTemporarily(clickedLayer, 5 * 1000)
-          } else {
-            setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
-            updateCorrectStates('correct')
-          }
+          setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
+          updateCorrectStates('correct')
         }
       } else {
         layer.setStyle(incorrectStyle)
