@@ -6,7 +6,7 @@ import { getFullName, getFurigana } from './contents'
 import {
   defaultStyle,
   makeIncorrectStyle,
-  makeSelectedStyle,
+  makeCorrectedStyle,
 } from './layer-styles'
 import { changeTileLayer } from './map-tiles'
 import { changeMessage, setFlashMessage } from './message'
@@ -122,7 +122,7 @@ const featureClickHandler: (
     clickedLayer.bindTooltip(name, { interactive: false })
     const layers = integratedLayers[code]
     const colors = getPastelColors()
-    const selectedStyle = makeSelectedStyle({
+    const correctedStyle = makeCorrectedStyle({
       fillColor: colors[9],
       color: colors[0],
     })
@@ -133,33 +133,31 @@ const featureClickHandler: (
     if (isClickedByUser(event)) {
       toriActionCount.value++
     }
+    console.log(layers)
+    const isCorrected = isCorrectMunicipal(code)
+    const isAlreadyCorrected = municipalityStates[code].corrected
+    if (isCorrected) {
+      municipalQueue.value.shift()
+    }
     for (const layer of layers) {
-      // すでにせいかいしたやつ
-      if (municipalityStates[code].corrected) {
-        setFlashMessage(`${furigana}\nだね`)
-        layer.setStyle(
-          makeSelectedStyle({
-            fillColor: colors[9],
-            color: colors[0],
-          })
-        )
-      } else if (isCorrectMunicipal(code)) {
-        municipalQueue.value.shift()
-        if (isClickedByTori(event)) {
-          setFlashMessage(`ここが \n${furigana} だよ`, 5 * 1000)
-          openTooltipTemporarily(clickedLayer, 5 * 1000)
-          layer.setStyle(selectedStyle)
-          // updateCorrectStates('correct')
-          municipalityStates[code].corrected = true
+      if (isCorrected) {
+        layer.setStyle(correctedStyle)
+        // すでにせいかいしたやつ
+        if (isAlreadyCorrected) {
+          setFlashMessage(`${furigana}\nだね`)
         } else {
-          setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
-          layer.setStyle(selectedStyle)
-          updateCorrectStates('correct')
           municipalityStates[code].corrected = true
+          if (isClickedByTori(event)) {
+            setFlashMessage(`ここが \n${furigana} だよ`, 5 * 1000)
+            openTooltipTemporarily(clickedLayer, 5 * 1000)
+          } else {
+            setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
+            updateCorrectStates('correct')
+          }
         }
       } else {
-        setFlashMessage(`ちがうよ それは\n${furigana}`)
         layer.setStyle(incorrectStyle)
+        setFlashMessage(`ちがうよ それは\n${furigana}`)
         updateCorrectStates('incorrect')
         openTooltipTemporarily(clickedLayer, 2000)
       }
@@ -205,7 +203,10 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
 export const clickLeyer = (code: string): void => {
   if (integratedLayers[code]) {
     integratedLayers[code].forEach((layer) => {
-      layer.fireEvent('click', { sourceTarget: 'tori' })
+      // 飛び地対策
+      if (!municipalityStates[code].corrected) {
+        layer.fireEvent('click', { sourceTarget: 'tori' })
+      }
     })
   }
 }
