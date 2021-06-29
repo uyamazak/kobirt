@@ -50,12 +50,14 @@
             </ruby>
             はどこ？
           </div>
-          <div v-else-if="!isLoading">おしまい</div>
+          <div v-else-if="isComplete">おしまい</div>
         </div>
       </div>
     </nav>
     <ul v-if="!isLoading" class="sub-menu text-sync">
-      <li><button @click="changeMapTile" class="text-xl lg:(text-3xl)">🗾</button></li>
+      <li>
+        <button class="text-xl lg:(text-3xl)" @click="changeMapTile">🗾</button>
+      </li>
       <li>
         <span>せいかい: {{ correctCount }}</span>
       </li>
@@ -87,8 +89,8 @@ import { ToriConfig } from './types'
 import { initLeafletMap, clickLeyer } from './map-logics'
 import { changeMessage } from './message'
 import {
-  isLoadingGeoJson,
-  isLoadingContents,
+  isLoading,
+  isComplete,
   toriActionCount,
   correctCount,
   incorrectCount,
@@ -141,13 +143,10 @@ export default defineComponent({
       toriActionCount.value++
     }
 
-    const isLoading = computed(() => {
-      return isLoadingGeoJson.value || isLoadingContents.value
-    })
-
     return {
       prefectureName: props.config.prefectureName,
       isLoading,
+      isComplete,
       currentMunicipal,
       correctCount,
       incorrectCount,
