@@ -23,4 +23,3 @@ export const contents = ref<ContentsJSON>()
 export const municipalityStates = reactive<MunicipalityOptions>({})
 export const currentMapTile = ref<MapTile | null>(null)
 export const isAttributionShown = ref(false)
-
