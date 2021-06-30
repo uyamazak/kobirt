@@ -215,3 +215,9 @@ export const clickLeyer = (code: string): void => {
 export const shuffleMunicipalQueue = () => {
   municipalQueue.value = shuffle(municipalQueue.value)
 }
+
+export const setStyleToAllLayer = (style: L.PathOptions) => {
+  allLeyers.eachLayer((layer) => {
+    layer.setStyle(style)
+  })
+}

@@ -3,8 +3,8 @@ import * as L from 'leaflet'
 export const defaultStyle = {
   color: '#666',
   fillColor: '#fff',
-  fillOpacity: 1,
-  weight: 2,
+  fillOpacity: 0.85,
+  weight: 1,
   opacity: 1,
 }
 
@@ -22,15 +22,10 @@ const styleWrapperFunc = (
 export const makeIncorrectStyle = styleWrapperFunc({
   color: '#999',
   fillColor: '#aaa',
-  fillOpacity: 0.7,
-  weight: 2,
-  opacity: 1,
 })
 
 export const makeCorrectedStyle = styleWrapperFunc({
   color: '#999',
   fillColor: '#ccc',
-  fillOpacity: 0.95,
-  weight: 3,
-  opacity: 1,
+  weight: 2,
 })

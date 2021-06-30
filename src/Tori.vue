@@ -59,6 +59,11 @@
         <button class="text-xl lg:(text-3xl)" @click="changeMapTile">🗾</button>
       </li>
       <li>
+        <button class="text-xl lg:(text-3xl)" @click="togglePrefecture">
+          🥷
+        </button>
+      </li>
+      <li>
         <span>せいかい: {{ correctCount }}</span>
       </li>
       <li>
@@ -82,11 +87,11 @@
 
 <script lang="ts">
 import * as L from 'leaflet'
-import { defineComponent, computed, onMounted, PropType } from 'vue'
+import { defineComponent, onMounted, PropType, ref } from 'vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
 import { ToriConfig } from './types'
-import { initLeafletMap, clickLeyer } from './map-logics'
+import { initLeafletMap, clickLeyer, setStyleToAllLayer } from './map-logics'
 import { changeMessage } from './message'
 import {
   isLoading,
@@ -142,6 +147,15 @@ export default defineComponent({
       }
       toriActionCount.value++
     }
+    const hidePrefecture = ref(false)
+    const togglePrefecture = () => {
+      hidePrefecture.value = !hidePrefecture.value
+      if (hidePrefecture.value) {
+        setStyleToAllLayer({ fillOpacity: 0.1 })
+      } else {
+        setStyleToAllLayer({ fillOpacity: 0.9 })
+      }
+    }
 
     return {
       prefectureName: props.config.prefectureName,
@@ -156,6 +170,7 @@ export default defineComponent({
       toriActionCount,
       currentMapTile,
       isAttributionShown,
+      togglePrefecture,
       changeMapTile,
       toriClick,
     }
