@@ -120,7 +120,7 @@ const featureClickHandler: (
     }
     const name = getFullName(code)
     clickedLayer.bindTooltip(name, { interactive: false })
-    const layers = integratedLayers[code]
+    const layerGroup = integratedLayers[code]
     const colors = getPastelColors()
     const correctedStyle = makeCorrectedStyle({
       fillColor: colors[9],
@@ -135,7 +135,7 @@ const featureClickHandler: (
     }
     //console.log(layers)
     const isCorrected = isCorrectMunicipal(code)
-    for (const layer of layers) {
+    layerGroup.eachLayer((layer) => {
       const isAlreadyCorrected = municipalityStates[code].corrected
       if (isCorrected && !isAlreadyCorrected) {
         municipalQueue.value.shift()
@@ -161,11 +161,12 @@ const featureClickHandler: (
         openTooltipTemporarily(clickedLayer, 2000)
       }
       changeMessage()
-    }
+    })
   }
 }
 // とびち がべつになってるから あわせたやつ
 const integratedLayers: IntegratedLayers = {}
+const allLeyers: L.LayerGroup = L.layerGroup()
 
 const loadGeojson = async (map: L.Map, geojson: string) => {
   isLoadingGeoJson.value = true
@@ -181,10 +182,11 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
     style: defaultStyle,
     onEachFeature: (feature, layer) => {
       const code = getMuniCode(feature)
+      allLeyers.addLayer(layer)
       if (integratedLayers[code]) {
-        integratedLayers[code].push(layer)
+        integratedLayers[code].addLayer(layer)
       } else {
-        integratedLayers[code] = [layer]
+        integratedLayers[code] = L.layerGroup([layer])
       }
       municipalityStates[code] = { corrected: false }
       if (!municipalsTmp.includes(code)) {
@@ -201,7 +203,7 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
 
 export const clickLeyer = (code: string): void => {
   if (integratedLayers[code]) {
-    integratedLayers[code].forEach((layer) => {
+    integratedLayers[code].eachLayer((layer) => {
       // 飛び地対策
       if (!municipalityStates[code].corrected) {
         layer.fireEvent('click', { sourceTarget: 'tori' })

@@ -20,7 +20,7 @@ export interface LatLngZoom extends LatLng {
   zoom: number
 }
 export interface IntegratedLayers {
-  [key: string]: L.Layer[]
+  [key: string]: L.LayerGroup
 }
 export interface InitMapOptions {
   prefectureName: string
