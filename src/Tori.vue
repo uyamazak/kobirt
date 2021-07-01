@@ -92,6 +92,7 @@ import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
 import { ToriConfig } from './types'
 import { initLeafletMap, clickLeyer, setStyleToAllLayer } from './map-logics'
+import { defaultFillOpacity } from './layer-styles'
 import { changeMessage } from './message'
 import {
   isLoading,
@@ -105,6 +106,7 @@ import {
   currentMunicipal,
   currentMapTile,
   isAttributionShown,
+  isPrefectureHidden,
 } from './states'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
@@ -147,13 +149,12 @@ export default defineComponent({
       }
       toriActionCount.value++
     }
-    const hidePrefecture = ref(false)
     const togglePrefecture = () => {
-      hidePrefecture.value = !hidePrefecture.value
-      if (hidePrefecture.value) {
-        setStyleToAllLayer({ fillOpacity: 0.1 })
+      isPrefectureHidden.value = !isPrefectureHidden.value
+      if (isPrefectureHidden.value) {
+        setStyleToAllLayer({ fillOpacity: 0 })
       } else {
-        setStyleToAllLayer({ fillOpacity: 0.9 })
+        setStyleToAllLayer({ fillOpacity: defaultFillOpacity })
       }
     }
 

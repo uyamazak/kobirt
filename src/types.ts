@@ -1,6 +1,7 @@
 declare module 'leaflet' {
   interface Layer {
     setStyle(style: L.PathOptions): L.Layer
+    getCenter(): L.LatLng
   }
 }
 
@@ -25,8 +26,8 @@ export interface IntegratedLayers {
 export interface InitMapOptions {
   prefectureName: string
   mapHTMLElement: HTMLElement
-  leftTopLatLng: LatLng
-  rightBottomLatLng: LatLng
+  northWestLatLng: LatLng
+  southEastLatLng: LatLng
   defaultView: LatLngZoom
   minZoom: number
   maxZoom: number

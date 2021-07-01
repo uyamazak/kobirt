@@ -1,10 +1,11 @@
 import * as L from 'leaflet'
 
+export const defaultFillOpacity = 0.85
 export const defaultStyle = {
   color: '#666',
   fillColor: '#fff',
-  fillOpacity: 0.85,
-  weight: 1,
+  fillOpacity: defaultFillOpacity,
+  weight: 1.5,
   opacity: 1,
 }
 
