@@ -205,7 +205,7 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
   map.addLayer(geoJson)
 }
 
-export const clickLeyer = (code: string): void => {
+export const clickLayerByTori = (code: string): void => {
   if (integratedLayers[code]) {
     integratedLayers[code].eachLayer((layer) => {
       // 飛び地対策

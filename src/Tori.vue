@@ -91,7 +91,7 @@ import { defineComponent, onMounted, PropType, ref } from 'vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
 import { ToriConfig } from './types'
-import { initLeafletMap, clickLeyer, setStyleToAllLayer } from './map-logics'
+import { initLeafletMap, clickLayerByTori, setStyleToAllLayer } from './map-logics'
 import { defaultFillOpacity } from './layer-styles'
 import { changeMessage } from './message'
 import {
@@ -145,7 +145,7 @@ export default defineComponent({
     }
     const toriClick = () => {
       if (municipalQueue.value[0]) {
-        clickLeyer(municipalQueue.value[0])
+        clickLayerByTori(municipalQueue.value[0])
       }
       toriActionCount.value++
     }
