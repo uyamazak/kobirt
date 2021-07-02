@@ -64,10 +64,10 @@
         </button>
       </li>
       <li>
-        <span>せいかい: {{ correctCount }}</span>
+        <span><small>せいかい:</small> {{ correctCount }}</span>
       </li>
       <li>
-        <span>のこり: {{ municipalQueue.length }}</span>
+        <span><small>のこり:</small> {{ municipalQueue.length }}</span>
       </li>
       <li>
         <a href="https://github.com/uyamazak/kobirt" target="_blank">
