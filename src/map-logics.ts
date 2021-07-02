@@ -24,7 +24,10 @@ import { InitMapOptions, IntegratedLayers, AnswerResult } from './types'
 import { shuffle } from './libs'
 
 const getMuniCode = (feature: GeoJSON.Feature): string => {
-  return feature.properties?.N03_007 ?? ''
+  return feature.properties?.code ?? ''
+}
+const isMainLayer = (layer: L.Layer): boolean => {
+  return layer.feature?.properties?.main === 1
 }
 
 const changeIncorrectLevel = (num: number) => {
@@ -52,19 +55,19 @@ export const initLeafletMap = async (
 ): Promise<L.Map> => {
   const {
     mapHTMLElement,
-    leftTopLatLng,
-    rightBottomLatLng,
+    northWestLatLng,
+    southEastLatLng,
     defaultView,
     minZoom,
     maxZoom,
     geoJsonUrl,
   } = { ...options }
   // 左上
-  const leftTop = L.latLng(leftTopLatLng.latitude, leftTopLatLng.longitude)
+  const leftTop = L.latLng(northWestLatLng.latitude, northWestLatLng.longitude)
   // 右下
   const rightBottom = L.latLng(
-    rightBottomLatLng.latitude,
-    rightBottomLatLng.longitude
+    southEastLatLng.latitude,
+    southEastLatLng.longitude
   )
   const bounds = L.latLngBounds(leftTop, rightBottom)
   const map = L.map(mapHTMLElement, {
@@ -86,6 +89,7 @@ const isCorrectMunicipal = (code: string): boolean => {
 }
 
 const openTooltipTemporarily = (layer: L.Layer, timerMs = 2000) => {
+  closeAllTooltips()
   layer.openTooltip()
   setTimeout(() => layer.closeTooltip(), timerMs)
 }
@@ -106,8 +110,9 @@ const isClickedByUser = (event: L.LeafletMouseEvent) => {
 }
 
 const featureClickHandler: (
-  integratedLayers: IntegratedLayers
-) => L.LeafletMouseEventHandlerFn = (integratedLayers) => {
+  integratedLayers: IntegratedLayers,
+  map: L.Map
+) => L.LeafletMouseEventHandlerFn = (integratedLayers, map) => {
   return (event) => {
     if (!isClickedByUser(event) && !isClickedByTori(event)) {
       return
@@ -119,8 +124,11 @@ const featureClickHandler: (
       return
     }
     const name = getFullName(code)
-    clickedLayer.bindTooltip(name, { interactive: false })
-    const layers = integratedLayers[code]
+    clickedLayer.bindTooltip(name, {
+      interactive: false,
+      direction: 'top',
+      offset: [0, -5],
+    })
     const colors = getPastelColors()
     const correctedStyle = makeCorrectedStyle({
       fillColor: colors[9],
@@ -133,23 +141,28 @@ const featureClickHandler: (
     if (isClickedByUser(event)) {
       toriActionCount.value++
     }
-    //console.log(layers)
+    const isAlreadyCorrected = municipalityStates[code].corrected ?? false
     const isCorrected = isCorrectMunicipal(code)
-    for (const layer of layers) {
-      const isAlreadyCorrected = municipalityStates[code].corrected
-      if (isCorrected && !isAlreadyCorrected) {
-        municipalQueue.value.shift()
-      }
+    // 最初の正解
+    if (isCorrected && !isAlreadyCorrected) {
+      municipalityStates[code].corrected = true
+      municipalQueue.value.shift()
+    }
+    const layerGroup = integratedLayers[code]
+    layerGroup.eachLayer((layer) => {
       if (isAlreadyCorrected) {
         // すでにせいかいしたやつ
         setFlashMessage(`${furigana}\nだね`)
         layer.setStyle(correctedStyle)
       } else if (isCorrected) {
         layer.setStyle(correctedStyle)
-        municipalityStates[code].corrected = true
         if (isClickedByTori(event)) {
           setFlashMessage(`ここが \n${furigana} だよ`, 5 * 1000)
           openTooltipTemporarily(clickedLayer, 5 * 1000)
+          map.flyTo(layer.getCenter(), 10, {
+            duration: 0.2,
+            easeLinearity: 0.1,
+          })
         } else {
           setFlashMessage(`せいかい それが\n${furigana}`, 5 * 1000)
           updateCorrectStates('correct')
@@ -161,11 +174,13 @@ const featureClickHandler: (
         openTooltipTemporarily(clickedLayer, 2000)
       }
       changeMessage()
-    }
+    })
   }
 }
 // とびち がべつになってるから あわせたやつ
 const integratedLayers: IntegratedLayers = {}
+// すべてのレイヤー
+const allLeyers: L.LayerGroup = L.layerGroup()
 
 const loadGeojson = async (map: L.Map, geojson: string) => {
   isLoadingGeoJson.value = true
@@ -181,35 +196,49 @@ const loadGeojson = async (map: L.Map, geojson: string) => {
     style: defaultStyle,
     onEachFeature: (feature, layer) => {
       const code = getMuniCode(feature)
+      allLeyers.addLayer(layer)
       if (integratedLayers[code]) {
-        integratedLayers[code].push(layer)
+        integratedLayers[code].addLayer(layer)
       } else {
-        integratedLayers[code] = [layer]
+        integratedLayers[code] = L.layerGroup([layer])
       }
       municipalityStates[code] = { corrected: false }
       if (!municipalsTmp.includes(code)) {
         municipalsTmp.push(code)
       }
       layer.on({
-        click: featureClickHandler(integratedLayers),
+        click: featureClickHandler(integratedLayers, map),
       })
     },
   })
   municipalQueue.value = shuffle<string>(municipalsTmp)
-  map.addLayer(geoJson)
+  map.addLayer(geoJson as L.Layer)
 }
 
-export const clickLeyer = (code: string): void => {
+export const clickLayerByTori = (code: string): void => {
   if (integratedLayers[code]) {
-    integratedLayers[code].forEach((layer) => {
-      // 飛び地対策
-      if (!municipalityStates[code].corrected) {
-        layer.fireEvent('click', { sourceTarget: 'tori' })
+    integratedLayers[code].eachLayer((layer) => {
+      // 飛び地対策, mainだけクリックする
+      if (!isMainLayer(layer)) {
+        return
       }
+      layer.fireEvent('click', { sourceTarget: 'tori' })
     })
   }
 }
 
 export const shuffleMunicipalQueue = () => {
   municipalQueue.value = shuffle(municipalQueue.value)
+}
+
+export const setStyleToAllLayer = (style: L.PathOptions) => {
+  allLeyers.eachLayer((layer) => {
+    layer.setStyle(style)
+  })
+}
+
+export const closeAllTooltips = () => {
+  allLeyers.eachLayer((layer) => {
+    layer.closeTooltip()
+  })
 }

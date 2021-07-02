@@ -50,17 +50,24 @@
             </ruby>
             はどこ？
           </div>
-          <div v-else-if="!isLoading">おしまい</div>
+          <div v-else-if="isComplete">おしまい</div>
         </div>
       </div>
     </nav>
     <ul v-if="!isLoading" class="sub-menu text-sync">
-      <li><button @click="changeMapTile" class="text-xl lg:(text-3xl)">🗾</button></li>
       <li>
-        <span>せいかい: {{ correctCount }}</span>
+        <button class="text-xl lg:(text-3xl)" @click="changeMapTile">🗾</button>
       </li>
       <li>
-        <span>のこり: {{ municipalQueue.length }}</span>
+        <button class="text-xl lg:(text-3xl)" @click="togglePrefecture">
+          🥷
+        </button>
+      </li>
+      <li>
+        <span><small>せいかい:</small> {{ correctCount }}</span>
+      </li>
+      <li>
+        <span><small>のこり:</small> {{ municipalQueue.length }}</span>
       </li>
       <li>
         <a href="https://github.com/uyamazak/kobirt" target="_blank">
@@ -80,15 +87,20 @@
 
 <script lang="ts">
 import * as L from 'leaflet'
-import { defineComponent, computed, onMounted, PropType } from 'vue'
+import { defineComponent, onMounted, PropType, ref } from 'vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
 import { ToriConfig } from './types'
-import { initLeafletMap, clickLeyer } from './map-logics'
+import {
+  initLeafletMap,
+  clickLayerByTori,
+  setStyleToAllLayer,
+} from './map-logics'
+import { defaultFillOpacity } from './layer-styles'
 import { changeMessage } from './message'
 import {
-  isLoadingGeoJson,
-  isLoadingContents,
+  isLoading,
+  isComplete,
   toriActionCount,
   correctCount,
   incorrectCount,
@@ -98,6 +110,7 @@ import {
   currentMunicipal,
   currentMapTile,
   isAttributionShown,
+  isPrefectureHidden,
 } from './states'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
@@ -136,18 +149,23 @@ export default defineComponent({
     }
     const toriClick = () => {
       if (municipalQueue.value[0]) {
-        clickLeyer(municipalQueue.value[0])
+        clickLayerByTori(municipalQueue.value[0])
       }
       toriActionCount.value++
     }
-
-    const isLoading = computed(() => {
-      return isLoadingGeoJson.value || isLoadingContents.value
-    })
+    const togglePrefecture = () => {
+      isPrefectureHidden.value = !isPrefectureHidden.value
+      if (isPrefectureHidden.value) {
+        setStyleToAllLayer({ fillOpacity: 0 })
+      } else {
+        setStyleToAllLayer({ fillOpacity: defaultFillOpacity })
+      }
+    }
 
     return {
       prefectureName: props.config.prefectureName,
       isLoading,
+      isComplete,
       currentMunicipal,
       correctCount,
       incorrectCount,
@@ -157,6 +175,7 @@ export default defineComponent({
       toriActionCount,
       currentMapTile,
       isAttributionShown,
+      togglePrefecture,
       changeMapTile,
       toriClick,
     }
