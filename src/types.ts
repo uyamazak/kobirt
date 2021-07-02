@@ -2,6 +2,7 @@ declare module 'leaflet' {
   interface Layer {
     setStyle(style: L.PathOptions): L.Layer
     getCenter(): L.LatLng
+    feature?: any
   }
 }
 

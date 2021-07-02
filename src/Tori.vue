@@ -91,7 +91,11 @@ import { defineComponent, onMounted, PropType, ref } from 'vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
 import { ToriConfig } from './types'
-import { initLeafletMap, clickLayerByTori, setStyleToAllLayer } from './map-logics'
+import {
+  initLeafletMap,
+  clickLayerByTori,
+  setStyleToAllLayer,
+} from './map-logics'
 import { defaultFillOpacity } from './layer-styles'
 import { changeMessage } from './message'
 import {
