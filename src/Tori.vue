@@ -9,16 +9,47 @@
     <div class="h-screen flex z-1">
       <div ref="mapRef" class="flex-1" />
     </div>
-    <nav class="fixed w-full z-1000 bg-gray-50 bg-opacity-90 bottom-0 max-h-64">
+    <nav
+      class="fixed w-full z-1000 bg-gray-100 bg-opacity-90 bottom-0 max-h-64"
+    >
       <div class="flex">
-        <div class="w-1/3 pt-2 text-center relative">
+        <div class="w-2/3 pt-15px relative">
+          <div v-if="currentMunicipal" class="ml-5px">
+            <Questioner :emoji-character="currentEmojiCharacter">
+              <template v-if="currentMunicipal.countryName">
+                <ruby>
+                  {{ currentMunicipal.countryName }} <rp>(</rp
+                  ><rt>{{ currentMunicipal.countryFurigana }}</rt
+                  ><rp>)</rp>
+                </ruby>
+                &nbsp;
+              </template>
+              <ruby>
+                {{ currentMunicipal.name }} <rp>(</rp
+                ><rt>{{ currentMunicipal.furigana }}</rt
+                ><rp>)</rp>
+              </ruby>
+              はどこ？
+            </Questioner>
+          </div>
+          <div v-else-if="isComplete" class="ml-5px text-center text-sync">
+            <div>ありがとう！</div>
+            <div class="p-5px">
+              <span v-for="emoji in thanksEmojiCharacters" :key="emoji">{{
+                emoji
+              }}</span>
+            </div>
+            <div class="text-right" @click="reset">おしまい</div>
+          </div>
+        </div>
+        <div class="w-1/3 pt-2 text-center relative z-2000">
           <div
             v-if="message"
             class="
               flash-message
               text-sync
               inline-block
-              left-1/10
+              left-5px
               top-[-60px]
               sm:(left-1/5)
               md:(left-1/4
@@ -35,50 +66,14 @@
             @click="toriClick"
           />
         </div>
-        <div class="w-2/3 pt-5 text-sync-lg">
-          <div v-if="currentMunicipal">
-            <ruby>
-              {{ currentMunicipal.countryFurigana }} <rp>(</rp
-              ><rt>{{ currentMunicipal.countryName }}</rt
-              ><rp>)</rp>
-            </ruby>
-            &nbsp;
-            <ruby>
-              {{ currentMunicipal.furigana }} <rp>(</rp
-              ><rt>{{ currentMunicipal.name }}</rt
-              ><rp>)</rp>
-            </ruby>
-            はどこ？
-          </div>
-          <div v-else-if="isComplete">おしまい</div>
-        </div>
       </div>
     </nav>
-    <ul v-if="!isLoading" class="sub-menu text-sync">
-      <li>
-        <button class="text-xl lg:(text-3xl)" @click="changeMapTile">🗾</button>
-      </li>
-      <li>
-        <button class="text-xl lg:(text-3xl)" @click="togglePrefecture">
-          🥷
-        </button>
-      </li>
-      <li>
-        <span><small>せいかい:</small> {{ correctCount }}</span>
-      </li>
-      <li>
-        <span><small>のこり:</small> {{ municipalQueue.length }}</span>
-      </li>
-      <li>
-        <a href="https://github.com/uyamazak/kobirt" target="_blank">
-          <img
-            class="opacity-50 ml-8px max-w-16px lg:(max-w-32px) inline-block"
-            alt="github"
-            src="/img/github.png"
-          />
-        </a>
-      </li>
-    </ul>
+    <SubMenu
+      v-if="!isLoading"
+      :corrected="correctCount"
+      :remain="municipalQueue.length"
+      @change-map-tile="changeMapTile"
+    />
     <div v-if="currentMapTile" class="fixed top-0 z-2000 text-gray-500 text-xs">
       <Attribution />
     </div>
@@ -87,16 +82,17 @@
 
 <script lang="ts">
 import * as L from 'leaflet'
-import { defineComponent, onMounted, PropType, ref } from 'vue'
+import { defineComponent, onMounted, PropType } from 'vue'
 import { loadContents } from './contents'
 import { changeTileLayer } from './map-tiles'
+import { nextEmojiCharacter } from './emoji-characters'
 import { ToriConfig } from './types'
 import {
   initLeafletMap,
   clickLayerByTori,
-  setStyleToAllLayer,
+  removeAllLayersFromMap,
+  loadGeojson,
 } from './map-logics'
-import { defaultFillOpacity } from './layer-styles'
 import { changeMessage } from './message'
 import {
   isLoading,
@@ -110,12 +106,16 @@ import {
   currentMunicipal,
   currentMapTile,
   isAttributionShown,
-  isPrefectureHidden,
+  currentEmojiCharacter,
+  thanksEmojiCharacters,
+  resetStates,
 } from './states'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
 import Fukidashi from './components/Fukidashi.vue'
 import Attribution from './components/Attribution.vue'
+import Questioner from './components/Questioner.vue'
+import SubMenu from './components/SubMenu.vue'
 
 export default defineComponent({
   name: 'Tori',
@@ -124,6 +124,8 @@ export default defineComponent({
     ToriSide,
     Fukidashi,
     Attribution,
+    Questioner,
+    SubMenu,
   },
   props: {
     config: {
@@ -133,17 +135,27 @@ export default defineComponent({
   },
   setup(props) {
     let map: L.Map
-
+    const init = async () => {
+      await loadGeojson(map, props.config.geoJsonUrl)
+      await loadContents(props.config.contentsJsonUrl)
+      nextEmojiCharacter()
+      changeMessage()
+    }
     onMounted(async () => {
       if (mapRef.value) {
         map = await initLeafletMap({
           mapHTMLElement: mapRef.value,
           ...props.config,
         })
-        await loadContents(props.config.contentsJsonUrl)
-        changeMessage()
+        await init()
       }
     })
+
+    const reset = async () => {
+      resetStates()
+      removeAllLayersFromMap(map)
+      await init()
+    }
     const changeMapTile = () => {
       changeTileLayer(map)
     }
@@ -152,14 +164,6 @@ export default defineComponent({
         clickLayerByTori(municipalQueue.value[0])
       }
       toriActionCount.value++
-    }
-    const togglePrefecture = () => {
-      isPrefectureHidden.value = !isPrefectureHidden.value
-      if (isPrefectureHidden.value) {
-        setStyleToAllLayer({ fillOpacity: 0 })
-      } else {
-        setStyleToAllLayer({ fillOpacity: defaultFillOpacity })
-      }
     }
 
     return {
@@ -175,9 +179,11 @@ export default defineComponent({
       toriActionCount,
       currentMapTile,
       isAttributionShown,
-      togglePrefecture,
+      currentEmojiCharacter,
+      thanksEmojiCharacters,
       changeMapTile,
       toriClick,
+      reset,
     }
   },
 })
@@ -188,19 +194,7 @@ export default defineComponent({
   font-size: 10px;
   line-height: 1.2;
 }
-.text-sync {
-  @apply text-xs sm:text-sm md:text-base lg:text-lg;
-}
-.text-sync-lg {
-  @apply text-sm sm:text-base md:text-lg lg:text-xl;
-}
 .flash-message {
   @apply absolute h-2 text-opacity-50 whitespace-pre;
-}
-.sub-menu {
-  @apply fixed bottom-0 z-2000 right-8px pb-8px text-right;
-  li {
-    @apply inline-block mr-5px align-middle lg:(mr-20px);
-  }
 }
 </style>

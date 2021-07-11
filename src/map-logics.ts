@@ -7,8 +7,10 @@ import {
   defaultStyle,
   makeIncorrectStyle,
   makeCorrectedStyle,
+  defaultFillOpacity,
 } from './layer-styles'
 import { changeTileLayer } from './map-tiles'
+import { nextEmojiCharacter } from './emoji-characters'
 import { changeMessage, setFlashMessage } from './message'
 import {
   isLoadingGeoJson,
@@ -19,6 +21,7 @@ import {
   municipalQueue,
   currentMunicipal,
   municipalityStates,
+  isPrefectureHidden,
 } from './states'
 import { InitMapOptions, IntegratedLayers, AnswerResult } from './types'
 import { shuffle } from './libs'
@@ -81,7 +84,6 @@ export const initLeafletMap = async (
   }).fitWorld()
   changeTileLayer(map)
   map.setView([defaultView.latitude, defaultView.longitude], defaultView.zoom)
-  await loadGeojson(map, geoJsonUrl)
   return map
 }
 const isCorrectMunicipal = (code: string): boolean => {
@@ -147,6 +149,7 @@ const featureClickHandler: (
     if (isCorrected && !isAlreadyCorrected) {
       municipalityStates[code].corrected = true
       municipalQueue.value.shift()
+      nextEmojiCharacter()
     }
     const layerGroup = integratedLayers[code]
     layerGroup.eachLayer((layer) => {
@@ -182,7 +185,7 @@ const integratedLayers: IntegratedLayers = {}
 // すべてのレイヤー
 const allLeyers: L.LayerGroup = L.layerGroup()
 
-const loadGeojson = async (map: L.Map, geojson: string) => {
+export const loadGeojson = async (map: L.Map, geojson: string) => {
   isLoadingGeoJson.value = true
   const rawJson = await axios.get<GeoJsonObject>(geojson)
   const geoJsonObject = rawJson.data
@@ -241,4 +244,22 @@ export const closeAllTooltips = () => {
   allLeyers.eachLayer((layer) => {
     layer.closeTooltip()
   })
+}
+
+export const togglePrefecture = () => {
+  isPrefectureHidden.value = !isPrefectureHidden.value
+  if (isPrefectureHidden.value) {
+    setStyleToAllLayer({ fillOpacity: 0 })
+  } else {
+    setStyleToAllLayer({ fillOpacity: defaultFillOpacity })
+  }
+}
+
+export const removeAllLayersFromMap = (map: L.Map) => {
+  allLeyers.eachLayer((layer) => {
+    map.removeLayer(layer)
+  })
+  for (const l in integratedLayers) {
+    delete integratedLayers[l]
+  }
 }

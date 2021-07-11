@@ -24,3 +24,16 @@ export const municipalityStates = reactive<MunicipalityOptions>({})
 export const currentMapTile = ref<MapTile | null>(null)
 export const isAttributionShown = ref(false)
 export const isPrefectureHidden = ref(false)
+export const currentEmojiCharacter = ref('')
+export const thanksEmojiCharacters = ref<string[]>([])
+
+export const resetStates = () => {
+  toriActionCount.value = 0
+  correctCount.value = 0
+  incorrectCount.value = 0
+  incorrectLevel.value = 0
+  thanksEmojiCharacters.value = []
+  currentEmojiCharacter.value = ''
+  municipalQueue.value = []
+  municipalityStates.value = {}
+}
