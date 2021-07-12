@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "leaflet": "^1.7.1",
-    "vue@next": "^3.1.4"
+    "vue": "^3.1.4"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.8",
