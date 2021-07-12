@@ -16,14 +16,12 @@
         <div class="w-2/3 pt-15px relative">
           <div v-if="currentMunicipal" class="ml-5px">
             <Questioner :emoji-character="currentEmojiCharacter">
-              <template v-if="currentMunicipal.countryName">
-                <ruby>
-                  {{ currentMunicipal.countryName }} <rp>(</rp
-                  ><rt>{{ currentMunicipal.countryFurigana }}</rt
-                  ><rp>)</rp>
-                </ruby>
-                &nbsp;
-              </template>
+              <ruby>
+                {{ currentMunicipal.countryName }} <rp>(</rp
+                ><rt>{{ currentMunicipal.countryFurigana }}</rt
+                ><rp>)</rp>
+              </ruby>
+              &nbsp;
               <ruby>
                 {{ currentMunicipal.name }} <rp>(</rp
                 ><rt>{{ currentMunicipal.furigana }}</rt
@@ -135,7 +133,7 @@ export default defineComponent({
   },
   setup(props) {
     let map: L.Map
-    const init = async () => {
+    const initApp = async () => {
       await loadGeojson(map, props.config.geoJsonUrl)
       await loadContents(props.config.contentsJsonUrl)
       nextEmojiCharacter()
@@ -147,14 +145,14 @@ export default defineComponent({
           mapHTMLElement: mapRef.value,
           ...props.config,
         })
-        await init()
+        await initApp()
       }
     })
 
     const reset = async () => {
       resetStates()
       removeAllLayersFromMap(map)
-      await init()
+      await initApp()
     }
     const changeMapTile = () => {
       changeTileLayer(map)

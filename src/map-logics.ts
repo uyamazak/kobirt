@@ -63,7 +63,6 @@ export const initLeafletMap = async (
     defaultView,
     minZoom,
     maxZoom,
-    geoJsonUrl,
   } = { ...options }
   // 左上
   const leftTop = L.latLng(northWestLatLng.latitude, northWestLatLng.longitude)
