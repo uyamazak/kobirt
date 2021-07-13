@@ -24,4 +24,8 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  shortcuts: {
+    'text-sync': 'text-xs sm:text-sm md:text-base lg:text-lg',
+    'text-sync-lg': 'text-sm sm:text-base md:text-lg lg:text-xl',
+  },
 }

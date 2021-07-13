@@ -16,3 +16,14 @@ export const shuffle = <T>(array: T[]): T[] => {
   }
   return array
 }
+
+export function* numberGen(length: number): Generator<number> {
+  let i = 0
+  while (true) {
+    i++
+    if (i === length) {
+      i = 0
+    }
+    yield i
+  }
+}

@@ -1,3 +1,4 @@
+import { numberGen } from './libs'
 export const pastel = [
   [
     '#ff7f7f',
@@ -370,16 +371,6 @@ export const incorrectColors = [
   '#000',
 ]
 
-function* numberGen(length: number): Generator<number> {
-  let i = 0
-  while (true) {
-    i++
-    if (i === length) {
-      i = 0
-    }
-    yield i
-  }
-}
 const gen = numberGen(12)
 export const getPastelColors = (): string[] => {
   const i = gen.next()

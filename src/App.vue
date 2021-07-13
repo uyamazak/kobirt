@@ -12,7 +12,7 @@ export default defineComponent({
   components: { Tori },
   setup() {
     const latMargin = 0.8
-    const longMargin = 0.9
+    const longMargin = 1.2
     const saitamaNorthLat = 36.283533
     const saitamaEastLong = 139.8975563
     const saitamaWestLong = 138.7090083
