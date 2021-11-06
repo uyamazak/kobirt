@@ -41,7 +41,7 @@ import { defineComponent, PropType } from 'vue'
 import { currentMapTile, isAttributionShown } from '../states'
 
 export default defineComponent({
-  name: 'Attribution',
+  name: 'MapAttribution',
   props: {
     message: {
       type: String as PropType<string>,

@@ -5,7 +5,7 @@
 import { defineComponent, PropType } from 'vue'
 
 export default defineComponent({
-  name: 'Fukidashi',
+  name: 'ToriFukidashi',
   props: {
     message: {
       type: String as PropType<string>,

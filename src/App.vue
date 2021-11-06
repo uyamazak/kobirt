@@ -1,15 +1,15 @@
 <template>
-  <Tori :config="toriConfig" />
+  <ToriSan :config="toriConfig" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Tori from './Tori.vue'
+import ToriSan from './ToriSan.vue'
 import { ToriConfig } from './types'
 
 export default defineComponent({
   name: 'App',
-  components: { Tori },
+  components: { ToriSan },
   setup() {
     const latMargin = 0.8
     const longMargin = 1.2

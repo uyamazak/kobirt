@@ -8,7 +8,7 @@
 import { defineComponent, PropType } from 'vue'
 
 export default defineComponent({
-  name: 'Questioner',
+  name: 'ThirstyQuestioner',
   props: {
     emojiCharacter: {
       type: String as PropType<string>,

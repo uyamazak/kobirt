@@ -15,7 +15,7 @@
       <div class="flex">
         <div class="w-2/3 pt-15px relative">
           <div v-if="currentMunicipal" class="ml-5px">
-            <Questioner :emoji-character="currentEmojiCharacter">
+            <ThirstyQuestioner :emoji-character="currentEmojiCharacter">
               <ruby>
                 {{ currentMunicipal.countryName }} <rp>(</rp
                 ><rt>{{ currentMunicipal.countryFurigana }}</rt
@@ -28,7 +28,7 @@
                 ><rp>)</rp>
               </ruby>
               はどこ？
-            </Questioner>
+            </ThirstyQuestioner>
           </div>
           <div v-else-if="isComplete" class="ml-5px text-center text-sync">
             <div>ありがとう！</div>
@@ -56,7 +56,7 @@
               top-[-70px])
             "
           >
-            <Fukidashi :message="message" />
+            <ToriFukidashi :message="message" />
           </div>
           <ToriFront
             :reverse-x="toriActionCount % 2 !== 0"
@@ -73,7 +73,7 @@
       @change-map-tile="changeMapTile"
     />
     <div v-if="currentMapTile" class="fixed top-0 z-2000 text-gray-500 text-xs">
-      <Attribution />
+      <MapAttribution />
     </div>
   </div>
 </template>
@@ -110,19 +110,19 @@ import {
 } from './states'
 import ToriFront from './components/ToriFront.vue'
 import ToriSide from './components/ToriSide.vue'
-import Fukidashi from './components/Fukidashi.vue'
-import Attribution from './components/Attribution.vue'
-import Questioner from './components/Questioner.vue'
+import ToriFukidashi from './components/ToriFukidashi.vue'
+import MapAttribution from './components/MapAttribution.vue'
+import ThirstyQuestioner from './components/ThirstyQuestioner.vue'
 import SubMenu from './components/SubMenu.vue'
 
 export default defineComponent({
-  name: 'Tori',
+  name: 'ToriSan',
   components: {
     ToriFront,
     ToriSide,
-    Fukidashi,
-    Attribution,
-    Questioner,
+    ToriFukidashi,
+    MapAttribution,
+    ThirstyQuestioner,
     SubMenu,
   },
   props: {
