@@ -9,14 +9,23 @@ Tori-san will color the cities and towns of Saitama Prefecture.
 
 In case you didn't know, Saitama Prefecture is adjacent to the north of Tokyo.
 
+Saitama Prefecture is such an indescribable prefecture that it's [the subject of a movie](https://www.tondesaitama.com/).
+
 <img src="docs/img/sample_20210619.png " width="200">
 
 It doesn't have a save function yet, so if you reload it, it'll disappear.
 
 https://sirakobirt.web.app/
 
+# How to play
+This is not a game, it's a learning experience. But it may not help you in your life.
+
+If you click on the bird, it will tell you. You might be able to click on your given city, but that would be very difficult. 
+
+It is, after all, Saitama Prefecture.
+
 # Why would Tori-san be coloring it?
-You've usually never even heard of that municipality, let alone Saitama Prefecture.
+You've usually never even heard of that cities and towns, let alone Saitama Prefecture.
 
 The only one who knows them all is Torisan.
 
@@ -50,8 +59,6 @@ It'll explains what web technologies we're using.
 <a href="https://github.com/windicss/windicss/wiki">
   <img src="https://next.windicss.org/assets/logo.svg" alt="Windi CSS Logo" width="120" /><br>
 </a>
-
-
 
 ## Hosting
 [Firebase Hosting](https://firebase.google.com/docs/hosting?hl=ja) 
