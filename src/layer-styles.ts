@@ -28,7 +28,7 @@ export const makeIncorrectStyle = styleWrapperFunc({
 })
 
 export const makeSelectedStyle = styleWrapperFunc({
-  color: '#999',
+  color: '#ccc',
   fillColor: '#ccc',
   fillOpacity: 0.95,
   weight: 3,
