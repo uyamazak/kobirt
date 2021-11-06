@@ -1,33 +1,37 @@
-<img src="docs/img/tori-b1.png" alt="とりさん" width="300" />
+<img src="docs/img/tori-b1.png" alt="Tori-san" width="300" />
 
 [![ci](https://github.com/uyamazak/kobirt/actions/workflows/ci.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/ci.yml?query=workflow%3Aci)
 [![firebase-hosting-merge](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-merge.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
 [![firebase-hosting-pull-request](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/uyamazak/kobirt/actions/workflows/firebase-hosting-pull-request.yml?query=workflow%3Afirebase-hosting-pull-request.yml)
 
-# こばと 🕊️
-とりさんが さいたまけんの しくちょうそんを いろぬりするよ
+# kobirt 🕊️
+Tori-san will color the cities and towns of Saitama Prefecture.
+
+In case you didn't know, Saitama Prefecture is adjacent to the north of Tokyo.
 
 <img src="docs/img/sample_20210619.png " width="200">
 
-どうやってぬっているかは ひみつ
-
-# でも
-うごくけど まだ ほぞんするきのうが ないから さいよみこみ したりすると きえるよ
+It doesn't have a save function yet, so if you reload it, it'll disappear.
 
 https://sirakobirt.web.app/
 
-# なぜ
-みんな さいたまけんの しくちょうそん しらないでしょ
+# Why would Tori-san be coloring it?
+You've usually never even heard of that municipality, let alone Saitama Prefecture.
 
-ぜんぶ しってるのは とりさんぐらいだよ
+The only one who knows them all is Torisan.
 
-# いらすと
-とりさんのいらすとは [onoonoono5](https://twitter.com/onoonoono5) さん がかいたよ
+It seems they don't fly anymore, but they used to fly over Saitama Prefecture.
 
-# てくのろじー
-どんな ぎじゅつ を つかっているのか せつめいするよ
-## ぷろぐらみんぐ
-[Vite](https://vitejs.dev) と
+# Illustration
+The illustration of Tori-san was drawn by [onoonoono5](https://twitter.com/onoonoono5) 
+
+Apparently, it's about 16% kawaii than a real Tori-san.
+
+# Technology
+It'll explains what web technologies we're using.
+
+## Programing
+[Vite](https://vitejs.dev) 
 
 <a href="https://vitejs.dev" target="_blank" rel="noopener noreferrer">
     <img width="120" src="https://vitejs.dev/logo.svg" alt="Vite logo">
@@ -37,44 +41,42 @@ https://sirakobirt.web.app/
 
 <a href="https://vuejs.org" target="_blank" rel="noopener noreferrer"><img width="120" src="https://vuejs.org/images/logo.png" alt="Vue logo"></a>
 
-と [TypeScript](https://www.typescriptlang.org/) でつくってるよ
+ [TypeScript](https://www.typescriptlang.org/) 
 
-Vite の かいはつかんきょう くそ はやい
 
-## すたいる
-[Windi CSS](https://windicss.org/) をつかってるよ
+## Style
+[Windi CSS](https://windicss.org/) 
 
 <a href="https://github.com/windicss/windicss/wiki">
   <img src="https://next.windicss.org/assets/logo.svg" alt="Windi CSS Logo" width="120" /><br>
 </a>
 
-これも くそ はやいし べんりだよ
 
-## ほすてぃんぐ
-[Firebase Hosting](https://firebase.google.com/docs/hosting?hl=ja) つかってるよ
 
-ぷるりくで ぷれびゅー つくれるようになって べんりだよ
+## Hosting
+[Firebase Hosting](https://firebase.google.com/docs/hosting?hl=ja) 
 
-## じどうか
-[GitHub Actions](https://github.com/uyamazak/kobirt/actions) つかってるよ
 
-public ただなのはうれしいね
-## ちずのらいぶらり
-[Leaflet](https://leafletjs.com/)をつかってるよ Google マップ じゃなくても つくれるよ
+## CI/CD
+[GitHub Actions](https://github.com/uyamazak/kobirt/actions) 
+
+## Map library
+[Leaflet](https://leafletjs.com/)
 
 <img width="200" src="https://rawgit.com/Leaflet/Leaflet/master/src/images/logo.svg" alt="Leaflet" />
 
-## ちずのでーた
-[国土交通省の"行政区域データ"](https://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N03.html) のgeojsonをつかってるよ
+## Data of map
+[国土交通省の"行政区域データ"](https://nlftp.mlit.go.jp/ksj/jpgis/datalist/KsjTmplt-N03.html) geojson
 
 
-## ちずたいる
-[国土地理院の"地理院タイル"](https://maps.gsi.go.jp/development/sample.html) をつかってるよ
+## Tiles of Map
+[国土地理院の"地理院タイル"](https://maps.gsi.go.jp/development/sample.html) 
 
-みんなも なにかつくってみたら いいんじゃないかな ぜいきんのゆうこうかつようだよ
 
-# かいはつしゃ
-[uyamazak](https://github.com/uyamazak) しゅみで うぇぶの かいはつ してるみたい
+# Keeper
+[uyamazak](https://github.com/uyamazak) 
 
-# らいせんす
-Apache (とりさんのイラストをのぞく)
+We're always looking for keepers.
+
+# License
+Apache (Exclude Tori-san illustrations)
