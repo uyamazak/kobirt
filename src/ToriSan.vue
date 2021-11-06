@@ -116,7 +116,7 @@ import Questioner from './components/Questioner.vue'
 import SubMenu from './components/SubMenu.vue'
 
 export default defineComponent({
-  name: 'Tori',
+  name: 'ToriSan',
   components: {
     ToriFront,
     ToriSide,
