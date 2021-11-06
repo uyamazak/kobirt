@@ -20,16 +20,16 @@ https://sirakobirt.web.app/
 # How to play
 This is not a game, it's a learning experience. But it may not help you in your life.
 
-If you click on the bird, it will tell you. You might be able to click on your given city, but that would be very difficult. 
+If you click on Tori-san, it will tell you. You might be able to click on your given city, but that would be very difficult. 
 
 It is, after all, Saitama Prefecture.
 
 # Why would Tori-san be coloring it?
 You've usually never even heard of that cities and towns, let alone Saitama Prefecture.
 
-The only one who knows them all is Torisan.
+The only one who knows them all is Tori-san.
 
-It seems they don't fly anymore, but they used to fly over Saitama Prefecture.
+It seems Tori-san doesn`t fly anymore, but Tori-san used to fly over Saitama Prefecture.
 
 # Illustration
 The illustration of Tori-san was drawn by [onoonoono5](https://twitter.com/onoonoono5) 
